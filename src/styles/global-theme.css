@@ -1,0 +1,114 @@
+/* Global Theme CSS Variables */
+:root {
+  --primary-color: #10B981;
+  --secondary-color: #059669;
+  --accent-color: #0D9488;
+  --header-bg: #FFFFFF;
+  --header-text: #1F2937;
+  --footer-bg: #1F2937;
+  --footer-text: #F9FAFB;
+  --bg-color: #F0FDF4;
+}
+
+/* Apply theme colors to common elements */
+.bg-primary {
+  background-color: var(--primary-color) !important;
+}
+
+.text-primary {
+  color: var(--primary-color) !important;
+}
+
+.border-primary {
+  border-color: var(--primary-color) !important;
+}
+
+.bg-secondary {
+  background-color: var(--secondary-color) !important;
+}
+
+.text-secondary {
+  color: var(--secondary-color) !important;
+}
+
+.bg-accent {
+  background-color: var(--accent-color) !important;
+}
+
+.text-accent {
+  color: var(--accent-color) !important;
+}
+
+/* Header theme */
+.header-bg {
+  background-color: var(--header-bg) !important;
+}
+
+.header-text {
+  color: var(--header-text) !important;
+}
+
+/* Footer theme */
+.footer-bg {
+  background-color: var(--footer-bg) !important;
+}
+
+.footer-text {
+  color: var(--footer-text) !important;
+}
+
+/* Background theme */
+.bg-theme {
+  background-color: var(--bg-color) !important;
+}
+
+/* Button themes */
+.btn-primary {
+  background-color: var(--primary-color);
+  border-color: var(--primary-color);
+  color: white;
+}
+
+.btn-primary:hover {
+  background-color: var(--secondary-color);
+  border-color: var(--secondary-color);
+}
+
+.btn-secondary {
+  background-color: var(--secondary-color);
+  border-color: var(--secondary-color);
+  color: white;
+}
+
+.btn-secondary:hover {
+  background-color: var(--accent-color);
+  border-color: var(--accent-color);
+}
+
+/* Link themes */
+.link-primary {
+  color: var(--primary-color);
+}
+
+.link-primary:hover {
+  color: var(--secondary-color);
+}
+
+/* Form themes */
+.form-control:focus {
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 0.2rem rgba(16, 185, 129, 0.25);
+}
+
+/* Card themes */
+.card-primary {
+  border-left: 4px solid var(--primary-color);
+}
+
+.card-secondary {
+  border-left: 4px solid var(--secondary-color);
+}
+
+.card-accent {
+  border-left: 4px solid var(--accent-color);
+}
