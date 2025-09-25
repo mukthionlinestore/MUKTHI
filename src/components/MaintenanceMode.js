@@ -38,3 +38,4 @@ const MaintenanceMode = ({ message }) => {
 };
 
 export default MaintenanceMode;
+

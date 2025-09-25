@@ -246,3 +246,4 @@ websiteConfigSchema.statics.getInstance = async function() {
 };
 
 module.exports = mongoose.model('WebsiteConfig', websiteConfigSchema);
+

@@ -86,3 +86,4 @@ export const FooterProvider = ({ children }) => {
     </FooterContext.Provider>
   );
 };
+

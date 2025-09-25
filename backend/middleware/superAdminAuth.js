@@ -29,3 +29,4 @@ const superAdminAuth = async (req, res, next) => {
 };
 
 module.exports = { superAdminAuth };
+

@@ -107,3 +107,4 @@ const PaymentInstructions = ({ onClose }) => {
 };
 
 export default PaymentInstructions;
+

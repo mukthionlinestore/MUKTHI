@@ -40,3 +40,4 @@ const createSuperAdmin = async () => {
 
 // Run the script
 createSuperAdmin();
+
