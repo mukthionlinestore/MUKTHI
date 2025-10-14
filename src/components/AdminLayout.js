@@ -15,7 +15,8 @@ import {
   FaStore,
   FaChartLine,
   FaClipboardList,
-  FaBuilding
+  FaBuilding,
+  FaBell
 } from 'react-icons/fa';
 
 const AdminLayout = () => {
@@ -29,6 +30,7 @@ const AdminLayout = () => {
     { name: 'Products', href: '/admin/products', icon: FaBox },
     { name: 'Orders', href: '/admin/orders', icon: FaShoppingCart },
     { name: 'Users', href: '/admin/users', icon: FaUsers },
+    { name: 'Notifications', href: '/admin/notifications', icon: FaBell },
     { name: 'Settings', href: '/admin/settings', icon: FaCog },
     { name: 'Footer', href: '/admin/footer', icon: FaBuilding },
     { name: 'Categories', href: '/admin/categories', icon: FaTags },
@@ -48,7 +50,7 @@ const AdminLayout = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen ">
       {/* Mobile sidebar overlay */}
       {sidebarOpen && (
         <div 
@@ -58,7 +60,7 @@ const AdminLayout = () => {
       )}
 
       {/* Sidebar */}
-      <div className={`fixed top-16 left-0 bottom-0 z-50 w-64 bg-white shadow-lg transform transition-transform duration-300 ease-in-out lg:translate-x-0 lg:fixed lg:inset-y-0 lg:top-16 ${
+      <div className={`fixed top-16 left-0 bottom-0 z-50 w-64 bg-transparent backdrop-blur-md   transform transition-transform duration-300 ease-in-out lg:translate-x-0 lg:fixed lg:inset-y-0 lg:top-16 ${
         sidebarOpen ? 'translate-x-0' : '-translate-x-full'
       }`}>
         <div className="flex flex-col h-full overflow-y-auto">
@@ -114,36 +116,17 @@ const AdminLayout = () => {
       </div>
 
       {/* Main content */}
-      <div className="lg:ml-64 lg:flex-1 lg:flex lg:flex-col lg:min-h-screen ">
-        {/* Top bar */}
-        <div className="sticky top-0 z-30 bg-white shadow-sm border-b border-gray-200">
-          <div className="flex items-center justify-between px-3 sm:px-4 py-3 sm:py-4 lg:px-8">
-            <div className="flex items-center">
-              <button
-                onClick={() => setSidebarOpen(true)}
-                className="lg:hidden p-1.5 sm:p-2 text-gray-400 hover:text-gray-600 rounded-lg hover:bg-gray-100 mr-2 sm:mr-3"
-              >
-                <FaBars className="w-4 h-4 sm:w-5 sm:h-5" />
-              </button>
-              <h1 className="text-lg sm:text-xl font-semibold text-gray-900">
-                {navigation.find(item => isActive(item.href))?.name || 'Admin Panel'}
-              </h1>
-            </div>
-            
-            <div className="flex items-center space-x-3 sm:space-x-4">
-              <div className="hidden sm:flex items-center space-x-2 text-sm text-gray-500">
-                <FaChartLine className="w-4 h-4" />
-                <span>Analytics</span>
-              </div>
-              <div className="w-6 h-6 sm:w-8 sm:h-8 bg-gray-200 rounded-full flex items-center justify-center">
-                <FaUsers className="w-3 h-3 sm:w-4 sm:h-4 text-gray-600" />
-              </div>
-            </div>
-          </div>
-        </div>
+      <div className="lg:ml-64 lg:flex-1 lg:flex lg:flex-col lg:min-h-screen">
+        {/* Mobile menu slider - edge tab */}
+        <button
+          onClick={() => setSidebarOpen(true)}
+          className="lg:hidden fixed top-1/2 left-0 -translate-y-1/2 z-40 bg-white shadow-lg border-r border-gray-200 rounded-r-xl py-6 px-2 hover:px-3 transition-all duration-200"
+        >
+          <FaBars className="w-5 h-5 text-gray-600" />
+        </button>
 
         {/* Page content */}
-        <main className="flex-1 bg-gray-50">
+        <main className="flex-1 ">
           <Outlet />
         </main>
       </div>

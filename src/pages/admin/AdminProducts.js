@@ -39,7 +39,8 @@ import { toast } from 'react-toastify';
 
 const AdminProducts = () => {
   const { formatPrice } = useSettings();
-  const [products, setProducts] = useState([]);
+  const [allProducts, setAllProducts] = useState([]); // Store all products
+  const [products, setProducts] = useState([]); // Filtered products for display
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
@@ -57,18 +58,38 @@ const AdminProducts = () => {
   const [selectedProducts, setSelectedProducts] = useState([]);
   const [bulkActions, setBulkActions] = useState(false);
 
+  // Fetch products only on initial load and when filters/sort change
   useEffect(() => {
     fetchProducts();
     fetchCategories();
     fetchBrands();
-  }, [currentPage, searchTerm, filters, sortBy]);
+  }, [filters, sortBy]);
+
+  // Client-side search filtering
+  useEffect(() => {
+    if (!searchTerm.trim()) {
+      setProducts(allProducts);
+      return;
+    }
+
+    const searchLower = searchTerm.toLowerCase();
+    const filtered = allProducts.filter(product => 
+      product.name?.toLowerCase().includes(searchLower) ||
+      product.description?.toLowerCase().includes(searchLower) ||
+      product.category?.toLowerCase().includes(searchLower) ||
+      product.brand?.toLowerCase().includes(searchLower) ||
+      product.sku?.toLowerCase().includes(searchLower)
+    );
+    
+    setProducts(filtered);
+  }, [searchTerm, allProducts]);
 
   const fetchProducts = async () => {
     try {
       setLoading(true);
       const params = new URLSearchParams({
-        page: currentPage,
-        search: searchTerm,
+        page: 1,
+        limit: 1000, // Fetch all products for client-side filtering
         sort: sortBy,
         ...filters
       });
@@ -78,6 +99,7 @@ const AdminProducts = () => {
       console.log('Products API response:', response.data);
       console.log('First product data:', response.data.products[0]);
       
+      setAllProducts(response.data.products);
       setProducts(response.data.products);
       setTotalPages(response.data.totalPages);
       setTotalProducts(response.data.total);
@@ -192,7 +214,7 @@ const AdminProducts = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 flex items-center justify-center">
+      <div className="min-h-screen  flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-8 w-8 sm:h-12 sm:w-12 border-b-2 border-blue-600 mx-auto mb-3 sm:mb-4"></div>
           <p className="text-xs sm:text-sm text-gray-600">Loading products...</p>
@@ -202,7 +224,7 @@ const AdminProducts = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100">
+    <div className="min-h-screen ">
       <div className="px-2 py-3 sm:px-4 lg:px-6 xl:px-8 sm:py-4 lg:py-6">
         {/* Header Section */}
         <div className="mb-4 sm:mb-6 lg:mb-8">
@@ -211,7 +233,7 @@ const AdminProducts = () => {
               <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-900 mb-1">Product Management</h1>
               <p className="text-xs sm:text-sm lg:text-base text-gray-600">Manage your product catalog ({totalProducts} products)</p>
             </div>
-            <div className="flex flex-col sm:flex-row gap-2 sm:gap-3">
+            <div className="flex flex-row gap-2 sm:gap-3">
               <button
                 onClick={() => setShowFilters(!showFilters)}
                 className="inline-flex items-center justify-center px-3 py-2 sm:px-4 sm:py-2.5 bg-white border border-gray-200 rounded-lg sm:rounded-xl text-xs sm:text-sm font-medium text-gray-700 hover:bg-gray-50 transition-all duration-200 shadow-sm"
@@ -222,11 +244,16 @@ const AdminProducts = () => {
               </button>
               <Link
                 to="/admin/products/add"
-                className="inline-flex items-center justify-center px-3 py-2 sm:px-4 sm:py-2.5 lg:px-6 lg:py-3 bg-blue-600 text-white rounded-lg sm:rounded-xl text-xs sm:text-sm font-medium hover:bg-blue-700 transition-all duration-200 shadow-sm"
+                className="inline-flex items-center justify-center gap-2 px-3 py-2 sm:px-4 sm:py-2.5 text-xs sm:text-sm font-semibold text-white bg-gradient-to-r from-gray-700 via-gray-800 to-black hover:from-gray-800 hover:via-gray-900 hover:to-gray-800 rounded-xl sm:rounded-2xl transition-all duration-200 hover:scale-105 shadow-lg hover:shadow-xl focus:outline-none focus:ring-2 focus:ring-gray-500/20"
               >
-                <FaPlus className="w-3 h-3 sm:w-4 sm:h-4 lg:w-5 lg:h-5 mr-1.5 sm:mr-2" />
+                <FaPlus className="w-3 h-3 sm:w-4 sm:h-4" />
                 <span className="hidden sm:inline">Add Product</span>
                 <span className="sm:hidden">Add</span>
+                <div className="w-3 h-3 sm:w-4 sm:h-4 bg-white rounded-full flex items-center justify-center">
+                  <svg className="w-1.5 h-1.5 sm:w-2 sm:h-2 text-black" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                  </svg>
+                </div>
               </Link>
             </div>
           </div>
@@ -393,7 +420,7 @@ const AdminProducts = () => {
             )}
           </div>
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-4 lg:gap-6">
+          <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-2 sm:gap-4 lg:gap-6">
             {products.map((product) => {
               console.log('Rendering product:', product);
               return (
@@ -456,32 +483,32 @@ const AdminProducts = () => {
                 </div>
 
                 {/* Product Info */}
-                <div className="p-3 sm:p-4">
-                  <div className="flex items-start justify-between mb-2">
-                    <h3 className="text-xs sm:text-sm lg:text-base font-semibold text-gray-900 truncate flex-1 mr-2">
+                <div className="p-2 sm:p-4">
+                  <div className="flex items-start justify-between mb-1 sm:mb-2">
+                    <h3 className="text-xs sm:text-sm lg:text-base font-semibold text-gray-900 truncate flex-1 mr-1 sm:mr-2">
                       {product.name}
                     </h3>
-                    <span className="text-lg sm:text-xl font-bold text-blue-600">
+                    <span className="text-sm sm:text-xl font-bold text-blue-600">
                       {formatPrice(product.price)}
                     </span>
                   </div>
                   
-                  <div className="space-y-2 mb-3 sm:mb-4">
-                    <div className="flex items-center space-x-2">
-                      <FaTags className="w-3 h-3 sm:w-4 sm:h-4 text-gray-400" />
+                  <div className="space-y-1 sm:space-y-2 mb-2 sm:mb-4">
+                    <div className="flex items-center space-x-1 sm:space-x-2">
+                      <FaTags className="w-2.5 h-2.5 sm:w-4 sm:h-4 text-gray-400" />
                       <span className="text-xs sm:text-sm text-gray-600 truncate">
                         {product.category || 'No Category'}
                       </span>
                     </div>
-                    <div className="flex items-center space-x-2">
-                      <FaLayerGroup className="w-3 h-3 sm:w-4 sm:h-4 text-gray-400" />
+                    <div className="flex items-center space-x-1 sm:space-x-2">
+                      <FaLayerGroup className="w-2.5 h-2.5 sm:w-4 sm:h-4 text-gray-400" />
                       <span className="text-xs sm:text-sm text-gray-600">
                         Stock: {product.quantity || 0}
                       </span>
                     </div>
                     {product.brand && (
-                      <div className="flex items-center space-x-2">
-                        <FaTag className="w-3 h-3 sm:w-4 sm:h-4 text-gray-400" />
+                      <div className="flex items-center space-x-1 sm:space-x-2">
+                        <FaTag className="w-2.5 h-2.5 sm:w-4 sm:h-4 text-gray-400" />
                         <span className="text-xs sm:text-sm text-gray-600 truncate">
                           {product.brand}
                         </span>
@@ -490,7 +517,7 @@ const AdminProducts = () => {
                   </div>
 
                   {/* Action Buttons */}
-                  <div className="flex space-x-1.5 sm:space-x-2">
+                  <div className="flex space-x-1 sm:space-x-2">
                     <Link
                       to={`/product/${product._id}`}
                       className="flex-1 flex items-center justify-center px-2 py-1.5 sm:px-3 sm:py-2 text-xs sm:text-sm text-blue-600 hover:bg-blue-50 rounded-lg transition-all duration-200"

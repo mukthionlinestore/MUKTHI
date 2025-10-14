@@ -141,8 +141,8 @@ router.post('/', auth, async (req, res) => {
       tax,
       shippingCost,
       total,
-      isPaid: paymentMethod === 'Cash on Delivery' ? false : true,
-      paidAt: paymentMethod === 'Cash on Delivery' ? null : new Date(),
+      isPaid: ['Cash on Delivery', 'WhatsApp', 'Instagram'].includes(paymentMethod) ? false : true,
+      paidAt: ['Cash on Delivery', 'WhatsApp', 'Instagram'].includes(paymentMethod) ? null : new Date(),
       status: 'Pending'
     };
 
@@ -221,6 +221,7 @@ router.get('/', auth, async (req, res) => {
 
     const orders = await Order.find(filterQuery)
       .populate('items.product', 'name images brand category')
+      .populate('user', 'name email')
       .sort({ createdAt: -1 })
       .skip(skip)
       .limit(limit);

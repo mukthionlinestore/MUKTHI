@@ -1,6 +1,7 @@
 const express = require('express');
 const { superAdminAuth } = require('../middleware/superAdminAuth');
 const WebsiteConfig = require('../models/WebsiteConfig');
+const HomePageSettings = require('../models/HomePageSettings');
 const User = require('../models/User');
 const Product = require('../models/Product');
 const Order = require('../models/Order');
@@ -50,7 +51,7 @@ router.post('/login', async (req, res) => {
   }
 });
 
-// Get website configuration
+// Get website configuration (Super Admin only)
 router.get('/config', superAdminAuth, async (req, res) => {
   try {
     const config = await WebsiteConfig.getInstance();
@@ -61,23 +62,124 @@ router.get('/config', superAdminAuth, async (req, res) => {
   }
 });
 
+// Get public website configuration (No auth required)
+router.get('/public-config', async (req, res) => {
+  try {
+    const config = await WebsiteConfig.getInstance();
+    // Only return public-safe configuration
+    const publicConfig = {
+      websiteName: config.websiteName,
+      websiteDescription: config.websiteDescription,
+      websiteLogo: config.websiteLogo,
+      logoAlt: config.logoAlt,
+      contactEmail: config.contactEmail,
+      contactPhone: config.contactPhone,
+      contactAddress: config.contactAddress,
+      businessHours: config.businessHours,
+      primaryColor: config.primaryColor,
+      secondaryColor: config.secondaryColor,
+      accentColor: config.accentColor,
+      tertiaryColor: config.tertiaryColor,
+      quaternaryColor: config.quaternaryColor,
+      headerBackground: config.headerBackground,
+      headerTextColor: config.headerTextColor,
+      footerBackground: config.footerBackground,
+      footerTextColor: config.footerTextColor,
+      backgroundColor: config.backgroundColor,
+      navLinkColor: config.navLinkColor,
+      navLinkHoverColor: config.navLinkHoverColor,
+      navActiveColor: config.navActiveColor,
+      buttonPrimaryColor: config.buttonPrimaryColor,
+      buttonPrimaryHoverColor: config.buttonPrimaryHoverColor,
+      buttonSecondaryColor: config.buttonSecondaryColor,
+      buttonSecondaryHoverColor: config.buttonSecondaryHoverColor,
+      textPrimaryColor: config.textPrimaryColor,
+      textSecondaryColor: config.textSecondaryColor,
+      textMutedColor: config.textMutedColor,
+      borderColor: config.borderColor,
+      shadowColor: config.shadowColor,
+      successColor: config.successColor,
+      warningColor: config.warningColor,
+      errorColor: config.errorColor,
+      infoColor: config.infoColor
+    };
+    res.json(publicConfig);
+  } catch (error) {
+    console.error('Get public config error:', error);
+    res.status(500).json({ message: 'Failed to get public configuration' });
+  }
+});
+
 // Update website configuration
 router.put('/config', superAdminAuth, async (req, res) => {
   try {
+    console.log('Received config update:', req.body);
+    console.log('Payment settings received:', req.body.paymentSettings);
+    
     const config = await WebsiteConfig.getInstance();
+    console.log('Current config before update:', {
+      paymentSettings: config.paymentSettings,
+      _id: config._id
+    });
 
-    // Update configuration
+    // Update configuration - handle both simple fields and nested objects
     Object.keys(req.body).forEach(key => {
-      if (config.schema.paths[key]) {
+      if (key === 'paymentSettings' && typeof req.body[key] === 'object') {
+        // Handle paymentSettings as a nested object
+        if (!config.paymentSettings) {
+          config.paymentSettings = {};
+        }
+        Object.keys(req.body.paymentSettings).forEach(subKey => {
+          config.paymentSettings[subKey] = req.body.paymentSettings[subKey];
+        });
+      } else if (config.schema.paths[key]) {
+        // Handle simple field updates
         config[key] = req.body[key];
       }
     });
 
+    console.log('Config after update:', config.paymentSettings);
+    console.log('About to save config...');
+    
     await config.save();
+    console.log('Config saved successfully');
     res.json({ message: 'Configuration updated successfully', config });
   } catch (error) {
     console.error('Update config error:', error);
-    res.status(500).json({ message: 'Failed to update configuration' });
+    console.error('Error details:', error.message);
+    console.error('Error stack:', error.stack);
+    res.status(500).json({ 
+      message: 'Failed to update configuration', 
+      error: error.message 
+    });
+  }
+});
+
+// Update logo
+router.put('/logo', superAdminAuth, async (req, res) => {
+  try {
+    const { logoUrl, logoAlt } = req.body;
+    
+    if (!logoUrl) {
+      return res.status(400).json({ message: 'Logo URL is required' });
+    }
+
+    const config = await WebsiteConfig.getInstance();
+    config.websiteLogo = logoUrl;
+    config.logoAlt = logoAlt || 'Website Logo';
+    
+    await config.save();
+    
+    res.json({ 
+      message: 'Logo updated successfully', 
+      config: {
+        websiteLogo: config.websiteLogo,
+        logoAlt: config.logoAlt
+      }
+    });
+  } catch (error) {
+    console.error('Logo update error:', error);
+    res.status(500).json({ message: 'Failed to update logo' });
   }
 });
 
@@ -274,5 +376,90 @@ router.post('/backup', superAdminAuth, async (req, res) => {
   }
 });
 
+// Homepage Settings Management Routes
+
+// Get homepage settings
+router.get('/homepage-settings', superAdminAuth, async (req, res) => {
+  try {
+    const settings = await HomePageSettings.getSettings();
+    res.json({
+      success: true,
+      settings: settings
+    });
+  } catch (error) {
+    console.error('Error fetching homepage settings:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Failed to fetch homepage settings'
+    });
+  }
+});
+
+// Update homepage settings
+router.put('/homepage-settings', superAdminAuth, async (req, res) => {
+  try {
+    const { sections } = req.body;
+    
+    if (!sections || !Array.isArray(sections)) {
+      return res.status(400).json({
+        success: false,
+        message: 'Invalid sections data'
+      });
+    }
+
+    // Validate sections structure
+    for (const section of sections) {
+      if (!section.id || !section.name || typeof section.isVisible !== 'boolean' || typeof section.order !== 'number') {
+        return res.status(400).json({
+          success: false,
+          message: 'Invalid section structure'
+        });
+      }
+    }
+
+    const updatedSettings = await HomePageSettings.updateSettings(sections, req.user.id);
+    
+    res.json({
+      success: true,
+      message: 'Homepage settings updated successfully',
+      settings: updatedSettings
+    });
+  } catch (error) {
+    console.error('Error updating homepage settings:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Failed to update homepage settings'
+    });
+  }
+});
+
+// Get public homepage settings (for frontend)
+router.get('/public/homepage-settings', async (req, res) => {
+  try {
+    const settings = await HomePageSettings.getSettings();
+    
+    // Return only necessary data for frontend
+    const publicSettings = {
+      sections: settings.sections.map(section => ({
+        id: section.id,
+        isVisible: section.isVisible,
+        order: section.order
+      })).sort((a, b) => a.order - b.order)
+    };
+    
+    res.json({
+      success: true,
+      settings: publicSettings
+    });
+  } catch (error) {
+    console.error('Error fetching public homepage settings:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Failed to fetch homepage settings'
+    });
+  }
+});
+
 module.exports = router;
+
 

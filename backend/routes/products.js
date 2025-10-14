@@ -2,6 +2,7 @@ const express = require('express');
 const Product = require('../models/Product');
 const Category = require('../models/Category');
 const Brand = require('../models/Brand');
+const Notification = require('../models/Notification');
 const { auth, adminAuth } = require('../middleware/auth');
 
 const router = express.Router();
@@ -166,6 +167,16 @@ router.post('/', adminAuth, async (req, res) => {
   try {
     const product = new Product(req.body);
     await product.save();
+    
+    // Auto-generate notification for new product
+    try {
+      await Notification.createProductNotification(product, req.user.id);
+      console.log('✅ Product notification created for:', product.name);
+    } catch (notificationError) {
+      console.error('❌ Failed to create product notification:', notificationError);
+      // Don't fail the product creation if notification fails
+    }
+    
     res.status(201).json(product);
   } catch (error) {
     console.error(error);

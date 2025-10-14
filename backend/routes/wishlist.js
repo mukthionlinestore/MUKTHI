@@ -9,7 +9,7 @@ const router = express.Router();
 router.get('/', auth, async (req, res) => {
   try {
     let wishlist = await Wishlist.findOne({ user: req.user._id })
-      .populate('products.product', 'name price images brand category isNewProduct colors sizes quantity isSold shippingCharge');
+      .populate('products.product', 'name description price originalPrice images thumbnailIndex brand category isNewProduct isFeatured colors sizes quantity isSold shippingCharge rating numReviews');
 
     if (!wishlist) {
       wishlist = new Wishlist({ user: req.user._id, products: [] });
@@ -49,7 +49,7 @@ router.post('/add', auth, async (req, res) => {
 
     wishlist.products.push({ product: productId });
     await wishlist.save();
-    await wishlist.populate('products.product', 'name price images brand category isNewProduct colors sizes quantity isSold shippingCharge');
+    await wishlist.populate('products.product', 'name description price originalPrice images thumbnailIndex brand category isNewProduct isFeatured colors sizes quantity isSold shippingCharge rating numReviews');
 
     res.json(wishlist);
   } catch (error) {
@@ -72,7 +72,7 @@ router.delete('/remove/:productId', auth, async (req, res) => {
     );
 
     await wishlist.save();
-    await wishlist.populate('products.product', 'name price images brand category isNewProduct colors sizes quantity isSold shippingCharge');
+    await wishlist.populate('products.product', 'name description price originalPrice images thumbnailIndex brand category isNewProduct isFeatured colors sizes quantity isSold shippingCharge rating numReviews');
 
     res.json(wishlist);
   } catch (error) {

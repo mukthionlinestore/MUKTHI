@@ -34,14 +34,27 @@ import { toast } from 'react-toastify';
 
 const AdminOrders = () => {
   const { formatPrice } = useSettings();
-  const [orders, setOrders] = useState([]);
+  
+  // Get default dates (last 7 days)
+  const getDefaultDates = () => {
+    const today = new Date();
+    const sevenDaysAgo = new Date(today);
+    sevenDaysAgo.setDate(today.getDate() - 7);
+    
+    return {
+      dateFrom: sevenDaysAgo.toISOString().split('T')[0],
+      dateTo: today.toISOString().split('T')[0]
+    };
+  };
+  
+  const [allOrders, setAllOrders] = useState([]); // Store all orders
+  const [orders, setOrders] = useState([]); // Filtered orders for display
   const [loading, setLoading] = useState(true);
   const [selectedOrders, setSelectedOrders] = useState([]);
   const [filters, setFilters] = useState({
     status: '',
     search: '',
-    dateFrom: '',
-    dateTo: ''
+    ...getDefaultDates() // Set default dates to last 7 days
   });
   const [pagination, setPagination] = useState({
     currentPage: 1,
@@ -62,22 +75,46 @@ const AdminOrders = () => {
     notes: ''
   });
 
+  // Fetch orders only when status filter or sort changes (not on search)
   useEffect(() => {
     fetchOrders();
-  }, [filters, pagination.currentPage, sortConfig]);
+  }, [filters.status, filters.dateFrom, filters.dateTo, sortConfig]);
+
+  // Client-side search filtering
+  useEffect(() => {
+    if (!filters.search.trim()) {
+      setOrders(allOrders);
+      return;
+    }
+
+    const searchLower = filters.search.toLowerCase();
+    const filtered = allOrders.filter(order => 
+      order.orderNumber?.toLowerCase().includes(searchLower) ||
+      order.user?.name?.toLowerCase().includes(searchLower) ||
+      order.user?.email?.toLowerCase().includes(searchLower) ||
+      order.shippingAddress?.phone?.includes(searchLower) ||
+      order.status?.toLowerCase().includes(searchLower) ||
+      order.paymentMethod?.toLowerCase().includes(searchLower)
+    );
+    
+    setOrders(filtered);
+  }, [filters.search, allOrders]);
 
   const fetchOrders = async () => {
     try {
       setLoading(true);
       const params = new URLSearchParams({
-        page: pagination.currentPage,
-        limit: pagination.limit,
-        ...filters,
+        page: 1,
+        limit: 1000, // Fetch all orders for client-side filtering
+        status: filters.status,
+        dateFrom: filters.dateFrom,
+        dateTo: filters.dateTo,
         sortBy: sortConfig.field,
         sortOrder: sortConfig.direction
       });
 
       const response = await axios.get(`/api/admin/orders?${params}`);
+      setAllOrders(response.data.orders);
       setOrders(response.data.orders);
       setPagination(prev => ({
         ...prev,
@@ -287,7 +324,7 @@ const AdminOrders = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100">
+      <div className="min-h-screen ">
         <div className="px-3 py-4 sm:px-6 lg:px-8 sm:py-6">
           <div className="flex items-center justify-center min-h-[60vh]">
             <div className="text-center">
@@ -301,7 +338,7 @@ const AdminOrders = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100">
+    <div className="min-h-screen ">
       <div className="px-2 py-3 sm:px-4 lg:px-6 xl:px-8 sm:py-4 lg:py-6">
         {/* Header Section */}
         <div className="mb-4 sm:mb-6 lg:mb-8">
@@ -310,24 +347,29 @@ const AdminOrders = () => {
               <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-900 mb-1">Order Management</h1>
               <p className="text-xs sm:text-sm lg:text-base text-gray-600">Manage and track customer orders</p>
           </div>
-            <div className="flex flex-col sm:flex-row gap-2 sm:gap-3">
+            <div className="flex flex-row gap-2 sm:gap-3">
             <button 
-                className="inline-flex items-center justify-center px-3 py-2 sm:px-4 sm:py-2.5 lg:px-6 lg:py-3 bg-white border border-gray-200 rounded-lg sm:rounded-xl text-xs sm:text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors shadow-sm"
+                className="inline-flex items-center justify-center px-3 py-2 sm:px-4 sm:py-2.5 bg-white border border-gray-200 rounded-lg sm:rounded-xl text-xs sm:text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors shadow-sm"
               onClick={exportOrders}
               disabled={orders.length === 0}
             >
-                <FaDownload className="w-3 h-3 sm:w-4 sm:h-4 lg:w-5 lg:h-5 mr-1.5 sm:mr-2" />
+                <FaDownload className="w-3 h-3 sm:w-4 sm:h-4 mr-1.5 sm:mr-2" />
                 <span className="hidden sm:inline">Export CSV</span>
                 <span className="sm:hidden">Export</span>
             </button>
             <button 
-                className="inline-flex items-center justify-center px-3 py-2 sm:px-4 sm:py-2.5 lg:px-6 lg:py-3 bg-blue-600 text-white rounded-lg sm:rounded-xl text-xs sm:text-sm font-medium hover:bg-blue-700 transition-colors shadow-sm disabled:opacity-50 disabled:cursor-not-allowed"
+                className="inline-flex items-center justify-center gap-2 px-3 py-2 sm:px-4 sm:py-2.5 text-xs sm:text-sm font-semibold text-white bg-gradient-to-r from-gray-700 via-gray-800 to-black hover:from-gray-800 hover:via-gray-900 hover:to-gray-800 rounded-xl sm:rounded-2xl transition-all duration-200 hover:scale-105 shadow-lg hover:shadow-xl focus:outline-none focus:ring-2 focus:ring-gray-500/20 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
               onClick={() => setShowStatusModal(true)}
               disabled={selectedOrders.length === 0 || hasCancelledOrders}
             >
-                <FaEdit className="w-3 h-3 sm:w-4 sm:h-4 lg:w-5 lg:h-5 mr-1.5 sm:mr-2" />
+                <FaEdit className="w-3 h-3 sm:w-4 sm:h-4" />
                 <span className="hidden sm:inline">Update Status ({selectedOrders.length})</span>
                 <span className="sm:hidden">Update ({selectedOrders.length})</span>
+                <div className="w-3 h-3 sm:w-4 sm:h-4 bg-white rounded-full flex items-center justify-center">
+                  <svg className="w-1.5 h-1.5 sm:w-2 sm:h-2 text-black" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                  </svg>
+                </div>
             </button>
             </div>
           </div>
@@ -335,54 +377,62 @@ const AdminOrders = () => {
 
         {/* Filters Section */}
         <div className="bg-white rounded-lg sm:rounded-xl lg:rounded-2xl shadow-sm border border-gray-100 p-3 sm:p-4 lg:p-6 mb-4 sm:mb-6 lg:mb-8">
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2 sm:gap-3 lg:gap-4">
-            {/* Search */}
-            <div className="relative">
-              <FaSearch className="absolute left-2.5 sm:left-3 top-1/2 -translate-y-1/2 text-gray-400 w-3 h-3 sm:w-4 sm:h-4" />
+          <div className="space-y-2 sm:space-y-3 lg:space-y-4">
+            {/* Search and Status - First Row */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-3 lg:gap-4">
+              {/* Search */}
+              <div className="relative">
+                <FaSearch className="absolute left-2.5 sm:left-3 top-1/2 -translate-y-1/2 text-gray-400 w-3 h-3 sm:w-4 sm:h-4" />
+                  <input
+                    type="text"
+                  placeholder="Search orders..."
+                    value={filters.search}
+                    onChange={(e) => setFilters(prev => ({ ...prev, search: e.target.value }))}
+                  className="w-full pl-8 sm:pl-10 pr-3 sm:pr-4 py-2 sm:py-2.5 lg:py-3 border border-gray-200 rounded-lg text-xs sm:text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+                  />
+              </div>
+
+              {/* Status Filter */}
+              <div>
+                <select
+                  value={filters.status}
+                  onChange={(e) => setFilters(prev => ({ ...prev, status: e.target.value }))}
+                  className="w-full px-3 sm:px-4 py-2 sm:py-2.5 lg:py-3 border border-gray-200 rounded-lg text-xs sm:text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors bg-white"
+                >
+                  <option value="">All Statuses</option>
+                  <option value="Pending">Pending</option>
+                  <option value="Processing">Processing</option>
+                  <option value="Shipped">Shipped</option>
+                  <option value="Delivered">Delivered</option>
+                  <option value="Cancelled">Cancelled</option>
+                  <option value="Returned">Returned</option>
+                </select>
+              </div>
+            </div>
+
+            {/* Date Filters - Second Row (2 columns on mobile) */}
+            <div className="grid grid-cols-2 gap-2 sm:gap-3 lg:gap-4">
+              {/* Date From */}
+              <div>
                 <input
-                  type="text"
-                placeholder="Search orders..."
-                  value={filters.search}
-                  onChange={(e) => setFilters(prev => ({ ...prev, search: e.target.value }))}
-                className="w-full pl-8 sm:pl-10 pr-3 sm:pr-4 py-2 sm:py-2.5 lg:py-3 border border-gray-200 rounded-lg text-xs sm:text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+                  type="date"
+                  value={filters.dateFrom}
+                  onChange={(e) => setFilters(prev => ({ ...prev, dateFrom: e.target.value }))}
+                  className="w-full px-2 sm:px-4 py-2 sm:py-2.5 lg:py-3 border border-gray-200 rounded-lg text-xs sm:text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+                  placeholder="From"
                 />
-            </div>
+              </div>
 
-            {/* Status Filter */}
-            <div>
-              <select
-                value={filters.status}
-                onChange={(e) => setFilters(prev => ({ ...prev, status: e.target.value }))}
-                className="w-full px-3 sm:px-4 py-2 sm:py-2.5 lg:py-3 border border-gray-200 rounded-lg text-xs sm:text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors bg-white"
-              >
-                <option value="">All Statuses</option>
-                <option value="Pending">Pending</option>
-                <option value="Processing">Processing</option>
-                <option value="Shipped">Shipped</option>
-                <option value="Delivered">Delivered</option>
-                <option value="Cancelled">Cancelled</option>
-                <option value="Returned">Returned</option>
-              </select>
-            </div>
-
-            {/* Date From */}
-            <div>
-              <input
-                type="date"
-                value={filters.dateFrom}
-                onChange={(e) => setFilters(prev => ({ ...prev, dateFrom: e.target.value }))}
-                className="w-full px-3 sm:px-4 py-2 sm:py-2.5 lg:py-3 border border-gray-200 rounded-lg text-xs sm:text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
-              />
-            </div>
-
-            {/* Date To */}
-            <div>
-              <input
-                type="date"
-                value={filters.dateTo}
-                onChange={(e) => setFilters(prev => ({ ...prev, dateTo: e.target.value }))}
-                className="w-full px-3 sm:px-4 py-2 sm:py-2.5 lg:py-3 border border-gray-200 rounded-lg text-xs sm:text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
-              />
+              {/* Date To */}
+              <div>
+                <input
+                  type="date"
+                  value={filters.dateTo}
+                  onChange={(e) => setFilters(prev => ({ ...prev, dateTo: e.target.value }))}
+                  className="w-full px-2 sm:px-4 py-2 sm:py-2.5 lg:py-3 border border-gray-200 rounded-lg text-xs sm:text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+                  placeholder="To"
+                />
+              </div>
             </div>
           </div>
         </div>

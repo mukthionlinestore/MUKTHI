@@ -112,11 +112,11 @@ const AdminDashboard = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100">
+    <div className="min-h-screen ">
         <div className="flex items-center justify-center min-h-screen">
           <div className="text-center">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
-            <p className="mt-4 text-gray-600">Loading your dashboard...</p>
+            <div className="animate-spin rounded-full h-10 w-10 sm:h-12 sm:w-12 border-b-2 border-blue-600 mx-auto"></div>
+            <p className="mt-3 sm:mt-4 text-sm sm:text-base text-gray-600">Loading your dashboard...</p>
           </div>
         </div>
       </div>
@@ -124,65 +124,65 @@ const AdminDashboard = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100">
-      <div className="px-3 py-4 sm:px-6 lg:px-8 sm:py-6">
+    <div className="min-h-screen ">
+      <div className="px-2 py-3 sm:px-4 md:px-6 lg:px-8 sm:py-4 md:py-6">
         {/* Quick Stats Cards - Mobile Responsive */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 mb-6 sm:mb-8">
-          <div className="bg-white rounded-xl sm:rounded-2xl p-4 sm:p-6 shadow-sm border border-gray-100">
+        <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-2 sm:gap-4 mb-6 sm:mb-8">
+          <div className="bg-white rounded-xl sm:rounded-2xl p-2 sm:p-6 shadow-sm border border-gray-100">
             <div className="flex items-center justify-between">
               <div className="flex-1">
                 <p className="text-xs sm:text-sm font-medium text-gray-600 mb-1">Today's Orders</p>
                 <p className="text-xl sm:text-3xl font-bold text-gray-900">{quickStats.todayOrders}</p>
               </div>
-              <div className="w-10 h-10 sm:w-14 sm:h-14 bg-blue-100 rounded-lg sm:rounded-xl flex items-center justify-center ml-3 sm:ml-4">
-                <FaShoppingCart className="w-5 h-5 sm:w-7 sm:h-7 text-blue-600" />
+              <div className="w-8 h-8 sm:w-14 sm:h-14 bg-blue-100 rounded-lg sm:rounded-xl flex items-center justify-center ml-2 sm:ml-4">
+                <FaShoppingCart className="w-4 h-4 sm:w-7 sm:h-7 text-blue-600" />
               </div>
             </div>
           </div>
 
-          <div className="bg-white rounded-xl sm:rounded-2xl p-4 sm:p-6 shadow-sm border border-gray-100">
+          <div className="bg-white rounded-xl sm:rounded-2xl p-2 sm:p-6 shadow-sm border border-gray-100">
             <div className="flex items-center justify-between">
               <div className="flex-1">
                 <p className="text-xs sm:text-sm font-medium text-gray-600 mb-1">Revenue</p>
                 <p className="text-xl sm:text-3xl font-bold text-gray-900">{formatPrice(quickStats.todayRevenue)}</p>
               </div>
-              <div className="w-10 h-10 sm:w-14 sm:h-14 bg-green-100 rounded-lg sm:rounded-xl flex items-center justify-center ml-3 sm:ml-4">
-                <FaDollarSign className="w-5 h-5 sm:w-7 sm:h-7 text-green-600" />
+              <div className="w-8 h-8 sm:w-14 sm:h-14 bg-green-100 rounded-lg sm:rounded-xl flex items-center justify-center ml-2 sm:ml-4">
+                <FaDollarSign className="w-4 h-4 sm:w-7 sm:h-7 text-green-600" />
               </div>
             </div>
           </div>
 
-          <div className="bg-white rounded-xl sm:rounded-2xl p-4 sm:p-6 shadow-sm border border-gray-100">
+          <div className="bg-white rounded-xl sm:rounded-2xl p-2 sm:p-6 shadow-sm border border-gray-100">
             <div className="flex items-center justify-between">
               <div className="flex-1">
                 <p className="text-xs sm:text-sm font-medium text-gray-600 mb-1">Pending</p>
                 <p className="text-xl sm:text-3xl font-bold text-gray-900">{quickStats.pendingOrders}</p>
               </div>
-              <div className="w-10 h-10 sm:w-14 sm:h-14 bg-yellow-100 rounded-lg sm:rounded-xl flex items-center justify-center ml-3 sm:ml-4">
-                <FaClock className="w-5 h-5 sm:w-7 sm:h-7 text-yellow-600" />
+              <div className="w-8 h-8 sm:w-14 sm:h-14 bg-yellow-100 rounded-lg sm:rounded-xl flex items-center justify-center ml-2 sm:ml-4">
+                <FaClock className="w-4 h-4 sm:w-7 sm:h-7 text-yellow-600" />
               </div>
             </div>
           </div>
 
-          <div className="bg-white rounded-xl sm:rounded-2xl p-4 sm:p-6 shadow-sm border border-gray-100">
+          <div className="bg-white rounded-xl sm:rounded-2xl p-2 sm:p-6 shadow-sm border border-gray-100">
             <div className="flex items-center justify-between">
               <div className="flex-1">
                 <p className="text-xs sm:text-sm font-medium text-gray-600 mb-1">Low Stock</p>
                 <p className="text-xl sm:text-3xl font-bold text-gray-900">{quickStats.lowStockProducts}</p>
               </div>
-              <div className="w-10 h-10 sm:w-14 sm:h-14 bg-red-100 rounded-lg sm:rounded-xl flex items-center justify-center ml-3 sm:ml-4">
-                <FaExclamationTriangle className="w-5 h-5 sm:w-7 sm:h-7 text-red-600" />
+              <div className="w-8 h-8 sm:w-14 sm:h-14 bg-red-100 rounded-lg sm:rounded-xl flex items-center justify-center ml-2 sm:ml-4">
+                <FaExclamationTriangle className="w-4 h-4 sm:w-7 sm:h-7 text-red-600" />
               </div>
             </div>
           </div>
         </div>
 
         {/* Main Stats Cards - Mobile Responsive */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 mb-6 sm:mb-8">
-          <div className="bg-white rounded-xl sm:rounded-2xl p-4 sm:p-6 shadow-sm border border-gray-100">
+        <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-2 sm:gap-6 mb-6 sm:mb-8">
+          <div className="bg-white rounded-xl sm:rounded-2xl p-2 sm:p-6 shadow-sm border border-gray-100">
             <div className="flex items-center justify-between mb-3 sm:mb-4">
-              <div className="w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-r from-blue-500 to-blue-600 rounded-lg sm:rounded-xl flex items-center justify-center">
-                <FaUsers className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
+              <div className="w-8 h-8 sm:w-12 sm:h-12 bg-gradient-to-r from-blue-500 to-blue-600 rounded-lg sm:rounded-xl flex items-center justify-center">
+                <FaUsers className="w-4 h-4 sm:w-6 sm:h-6 text-white" />
               </div>
               <div className="flex items-center space-x-1">
                 {getTrendIcon(12)}
@@ -193,10 +193,10 @@ const AdminDashboard = () => {
             <p className="text-xs sm:text-sm text-gray-600">Total Users</p>
           </div>
 
-          <div className="bg-white rounded-xl sm:rounded-2xl p-4 sm:p-6 shadow-sm border border-gray-100">
+          <div className="bg-white rounded-xl sm:rounded-2xl p-2 sm:p-6 shadow-sm border border-gray-100">
             <div className="flex items-center justify-between mb-3 sm:mb-4">
-              <div className="w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-r from-green-500 to-green-600 rounded-lg sm:rounded-xl flex items-center justify-center">
-                <FaShoppingCart className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
+              <div className="w-8 h-8 sm:w-12 sm:h-12 bg-gradient-to-r from-green-500 to-green-600 rounded-lg sm:rounded-xl flex items-center justify-center">
+                <FaShoppingCart className="w-4 h-4 sm:w-6 sm:h-6 text-white" />
               </div>
               <div className="flex items-center space-x-1">
                 {getTrendIcon(8)}
@@ -207,10 +207,10 @@ const AdminDashboard = () => {
             <p className="text-xs sm:text-sm text-gray-600">Total Orders</p>
           </div>
 
-          <div className="bg-white rounded-xl sm:rounded-2xl p-4 sm:p-6 shadow-sm border border-gray-100">
+          <div className="bg-white rounded-xl sm:rounded-2xl p-2 sm:p-6 shadow-sm border border-gray-100">
             <div className="flex items-center justify-between mb-3 sm:mb-4">
-              <div className="w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-r from-purple-500 to-purple-600 rounded-lg sm:rounded-xl flex items-center justify-center">
-                <FaBox className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
+              <div className="w-8 h-8 sm:w-12 sm:h-12 bg-gradient-to-r from-purple-500 to-purple-600 rounded-lg sm:rounded-xl flex items-center justify-center">
+                <FaBox className="w-4 h-4 sm:w-6 sm:h-6 text-white" />
               </div>
               <div className="flex items-center space-x-1">
                 {getTrendIcon(15)}
@@ -221,10 +221,10 @@ const AdminDashboard = () => {
             <p className="text-xs sm:text-sm text-gray-600">Total Products</p>
           </div>
 
-          <div className="bg-white rounded-xl sm:rounded-2xl p-4 sm:p-6 shadow-sm border border-gray-100">
+          <div className="bg-white rounded-xl sm:rounded-2xl p-2 sm:p-6 shadow-sm border border-gray-100">
             <div className="flex items-center justify-between mb-3 sm:mb-4">
-              <div className="w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-r from-orange-500 to-orange-600 rounded-lg sm:rounded-xl flex items-center justify-center">
-                <FaDollarSign className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
+              <div className="w-8 h-8 sm:w-12 sm:h-12 bg-gradient-to-r from-orange-500 to-orange-600 rounded-lg sm:rounded-xl flex items-center justify-center">
+                <FaDollarSign className="w-4 h-4 sm:w-6 sm:h-6 text-white" />
               </div>
               <div className="flex items-center space-x-1">
                 {getTrendIcon(23)}

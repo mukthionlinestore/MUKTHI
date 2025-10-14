@@ -6,7 +6,7 @@ const AuthContext = createContext();
 const initialState = {
   user: null,
   token: localStorage.getItem('token'),
-  isAuthenticated: false,
+  isAuthenticated: !!localStorage.getItem('token'),
   loading: true,
   error: null
 };
@@ -86,12 +86,13 @@ export const AuthProvider = ({ children }) => {
           const res = await axios.get('/api/auth/profile');
           dispatch({
             type: 'AUTH_SUCCESS',
-            payload: { user: res.data, token }
+            payload: { user: res.data.user, token }
           });
         } catch (error) {
           console.log('Auth check failed:', error.response?.data?.message || error.message);
-          dispatch({ type: 'AUTH_FAIL', payload: error.response?.data?.message || 'Authentication failed' });
-          setAuthToken(null);
+          // Clear invalid token
+          localStorage.removeItem('token');
+          dispatch({ type: 'AUTH_FAIL', payload: null });
         }
       } else {
         dispatch({ type: 'AUTH_FAIL', payload: null });
@@ -102,17 +103,61 @@ export const AuthProvider = ({ children }) => {
     loadUser();
   }, [setAuthToken, isInitialized]); // Add isInitialized to prevent multiple calls
 
+  // Handle mobile Google OAuth token
+  useEffect(() => {
+    const handleGoogleToken = async () => {
+      const googleToken = localStorage.getItem('google_token');
+      if (googleToken && !state.isAuthenticated) {
+        console.log('📱 Processing Google token from localStorage...');
+        localStorage.removeItem('google_token'); // Clean up immediately
+        await loginWithGoogle(googleToken);
+      }
+    };
+
+    // Check on mount
+    handleGoogleToken();
+
+    // Listen for custom event from mobile redirect
+    const handleTokenEvent = () => {
+      console.log('📱 Google token event received');
+      handleGoogleToken();
+    };
+
+    window.addEventListener('google_token_received', handleTokenEvent);
+    
+    // Listen for Google OAuth success event
+    const handleAuthSuccess = (event) => {
+      console.log('✅ Auth success event received:', event.detail);
+      const { user, token } = event.detail;
+      dispatch({
+        type: 'AUTH_SUCCESS',
+        payload: { user, token }
+      });
+    };
+    
+    window.addEventListener('authSuccess', handleAuthSuccess);
+    
+    return () => {
+      window.removeEventListener('google_token_received', handleTokenEvent);
+      window.removeEventListener('authSuccess', handleAuthSuccess);
+    };
+  }, [state.isAuthenticated]);
+
   // Register user
   const register = async (userData) => {
     dispatch({ type: 'AUTH_START' });
     try {
       const res = await axios.post('/api/auth/register', userData);
-      setAuthToken(res.data.token);
-      dispatch({
-        type: 'AUTH_SUCCESS',
-        payload: res.data
-      });
-      return { success: true };
+      
+      // Don't automatically log in the user - they need to verify email first
+      // Just return success without setting token or dispatching AUTH_SUCCESS
+      dispatch({ type: 'AUTH_FAIL', payload: null }); // Reset loading state
+      
+      return { 
+        success: true, 
+        message: res.data.message,
+        verificationOTP: res.data.verificationOTP // For development
+      };
     } catch (error) {
       const message = error.response?.data?.message || 'Registration failed';
       dispatch({ type: 'AUTH_FAIL', payload: message });

@@ -18,7 +18,15 @@ import {
   FaCreditCard,
   FaHeadset,
   FaGift,
-  FaStar
+  FaStar,
+  FaShoppingBag,
+  FaUser,
+  FaHome,
+  FaQuestionCircle,
+  FaRocket,
+  FaAward,
+  FaClock,
+  FaGlobe
 } from 'react-icons/fa';
 
 const Footer = () => {
@@ -31,45 +39,48 @@ const Footer = () => {
   };
 
   return (
-    <footer className="relative bg-gradient-to-br from-emerald-900 via-teal-800 to-cyan-900 text-white">
-      {/* Background Pattern */}
-      <div className="absolute inset-0 opacity-5">
-        <div className="absolute inset-0" style={{
-          backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.1'%3E%3Ccircle cx='30' cy='30' r='2'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`
-        }}></div>
-      </div>
+    <footer className="relative ">
 
-      <div className="relative">
-              <div className="mx-auto max-w-7xl px-3 sm:px-4 lg:px-6">
+      <div className="relative z-10">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          
           {/* Main Footer Content */}
           <div className="py-6 sm:py-8 lg:py-12">
-            <div className="grid grid-cols-1 gap-6 sm:gap-8 lg:grid-cols-2 xl:grid-cols-4">
-              
-              {/* Brand Section */}
-              <div className="lg:col-span-1 xl:col-span-1">
-                <div className="flex items-center gap-2 sm:gap-3 mb-3 sm:mb-4">
-                  <div className="grid h-7 w-7 sm:h-8 sm:w-8 lg:h-9 lg:w-9 place-items-center rounded-lg sm:rounded-xl bg-white text-emerald-700 font-extrabold shadow-sm">
-                    <FaStore className="w-3 h-3 sm:w-4 sm:h-4" />
+            {/* Mobile Layout - Compact */}
+            <div className="block sm:hidden">
+              {/* Brand Section - Mobile */}
+              <div className="text-center mb-6">
+                <div className="flex items-center justify-center gap-3 mb-3">
+                  <div className="grid h-8 w-8 place-items-center rounded-xl font-extrabold shadow-lg transition-all duration-300 bg-gradient-to-br from-blue-600 to-purple-600">
+                    {config?.websiteLogo ? (
+                      <img 
+                        src={config.websiteLogo} 
+                        alt={config.logoAlt || 'Logo'} 
+                        className="w-5 h-5 object-contain"
+                      />
+                    ) : (
+                      <FaStore className="w-5 h-5 text-white" />
+                    )}
                   </div>
-                  <span className="text-sm sm:text-base lg:text-lg font-bold tracking-tight text-white">
-                    {config?.websiteName || footerData.companyName || 'E-Shop'}
+                  <span className="text-lg font-bold tracking-tight text-gray-900">
+                    {config?.websiteName || footerData.companyName || 'MUKHTI'}
                   </span>
                 </div>
-                <p className="text-xs sm:text-sm text-emerald-100 leading-relaxed mb-4 sm:mb-6 max-w-xs">
-                  {config?.websiteDescription || footerData.companyDescription || 'Your premium online shopping destination'}
+                <p className="text-xs text-gray-600 mb-4 max-w-xs mx-auto">
+                  {config?.websiteDescription || footerData.companyDescription || 'Gracefully unbound - Premium lifestyle and fashion destination'}
                 </p>
                 
-                {/* Social Media */}
-                <div className="flex items-center gap-2 sm:gap-3">
+                {/* Social Media - Mobile */}
+                <div className="flex items-center justify-center gap-2">
                   {(config?.socialMedia?.facebook || footerData.socialMedia?.facebook) && (
                     <a 
                       href={config?.socialMedia?.facebook || footerData.socialMedia?.facebook}
                       target="_blank"
                       rel="noopener noreferrer"
                       aria-label="Facebook" 
-                      className="inline-flex h-7 w-7 sm:h-8 sm:w-8 items-center justify-center rounded-lg sm:rounded-xl bg-white/10 backdrop-blur-sm text-emerald-100 hover:bg-white/20 hover:text-white transition-all duration-200 hover:scale-105"
+                      className="inline-flex h-8 w-8 items-center justify-center rounded-lg bg-blue-50 text-blue-600 hover:bg-blue-100 hover:scale-110 transition-all duration-200"
                     >
-                      <FaFacebook className="w-3 h-3 sm:w-4 sm:h-4" />
+                      <FaFacebook className="w-3 h-3" />
                     </a>
                   )}
                   {(config?.socialMedia?.twitter || footerData.socialMedia?.twitter) && (
@@ -78,9 +89,9 @@ const Footer = () => {
                       target="_blank"
                       rel="noopener noreferrer"
                       aria-label="Twitter" 
-                      className="inline-flex h-7 w-7 sm:h-8 sm:w-8 items-center justify-center rounded-lg sm:rounded-xl bg-white/10 backdrop-blur-sm text-emerald-100 hover:bg-white/20 hover:text-white transition-all duration-200 hover:scale-105"
+                      className="inline-flex h-8 w-8 items-center justify-center rounded-lg bg-sky-50 text-sky-600 hover:bg-sky-100 hover:scale-110 transition-all duration-200"
                     >
-                      <FaTwitter className="w-3 h-3 sm:w-4 sm:h-4" />
+                      <FaTwitter className="w-3 h-3" />
                     </a>
                   )}
                   {(config?.socialMedia?.instagram || footerData.socialMedia?.instagram) && (
@@ -89,9 +100,9 @@ const Footer = () => {
                       target="_blank"
                       rel="noopener noreferrer"
                       aria-label="Instagram" 
-                      className="inline-flex h-7 w-7 sm:h-8 sm:w-8 items-center justify-center rounded-lg sm:rounded-xl bg-white/10 backdrop-blur-sm text-emerald-100 hover:bg-white/20 hover:text-white transition-all duration-200 hover:scale-105"
+                      className="inline-flex h-8 w-8 items-center justify-center rounded-lg bg-pink-50 text-pink-600 hover:bg-pink-100 hover:scale-110 transition-all duration-200"
                     >
-                      <FaInstagram className="w-3 h-3 sm:w-4 sm:h-4" />
+                      <FaInstagram className="w-3 h-3" />
                     </a>
                   )}
                   {(config?.socialMedia?.linkedin || footerData.socialMedia?.linkedin) && (
@@ -100,9 +111,142 @@ const Footer = () => {
                       target="_blank"
                       rel="noopener noreferrer"
                       aria-label="LinkedIn" 
-                      className="inline-flex h-7 w-7 sm:h-8 sm:w-8 items-center justify-center rounded-lg sm:rounded-xl bg-white/10 backdrop-blur-sm text-emerald-100 hover:bg-white/20 hover:text-white transition-all duration-200 hover:scale-105"
+                      className="inline-flex h-8 w-8 items-center justify-center rounded-lg bg-blue-50 text-blue-700 hover:bg-blue-100 hover:scale-110 transition-all duration-200"
                     >
-                      <FaLinkedin className="w-3 h-3 sm:w-4 sm:h-4" />
+                      <FaLinkedin className="w-3 h-3" />
+                    </a>
+                  )}
+                </div>
+              </div>
+
+              {/* Quick Links - Mobile */}
+              <div className="mb-6">
+                <h4 className="text-sm font-semibold mb-3 text-center text-gray-900">
+                  Quick Links
+                </h4>
+                <div className="grid grid-cols-2 gap-3">
+                  <Link 
+                    to="/" 
+                    className="text-xs text-gray-600 hover:text-blue-600 transition-colors duration-200 text-center py-2"
+                  >
+                    Home
+                  </Link>
+                  <Link 
+                    to="/products" 
+                    className="text-xs text-gray-600 hover:text-blue-600 transition-colors duration-200 text-center py-2"
+                  >
+                    Products
+                  </Link>
+                  <Link 
+                    to="/about" 
+                    className="text-xs text-gray-600 hover:text-blue-600 transition-colors duration-200 text-center py-2"
+                  >
+                    About
+                  </Link>
+                  <Link 
+                    to="/contact" 
+                    className="text-xs text-gray-600 hover:text-blue-600 transition-colors duration-200 text-center py-2"
+                  >
+                    Contact
+                  </Link>
+                </div>
+              </div>
+
+              {/* Contact - Mobile */}
+              <div className="text-center">
+                <h4 className="text-sm font-semibold mb-3 text-gray-900">
+                  Contact Info
+                </h4>
+                <div className="space-y-2">
+                  {(config?.contactPhone || footerData.contact?.phone) && (
+                    <a 
+                      href={`tel:${config?.contactPhone || footerData.contact?.phone}`}
+                      className="text-xs text-gray-600 hover:text-cyan-600 transition-colors duration-200 block"
+                    >
+                      {config?.contactPhone || footerData.contact?.phone}
+                    </a>
+                  )}
+                  {(config?.contactEmail || footerData.contact?.email) && (
+                    <a 
+                      href={`mailto:${config?.contactEmail || footerData.contact?.email}`}
+                      className="text-xs text-gray-600 hover:text-cyan-600 transition-colors duration-200 block"
+                    >
+                      {config?.contactEmail || footerData.contact?.email}
+                    </a>
+                  )}
+                </div>
+              </div>
+            </div>
+
+            {/* Desktop Layout */}
+            <div className="hidden sm:grid sm:grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-12">
+              
+              {/* Brand Section */}
+              <div className="sm:col-span-2 lg:col-span-1">
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="grid h-10 w-10 sm:h-12 sm:w-12 place-items-center rounded-2xl font-extrabold shadow-lg transition-all duration-300 bg-gradient-to-br from-blue-600 to-purple-600">
+                    {config?.websiteLogo ? (
+                      <img 
+                        src={config.websiteLogo} 
+                        alt={config.logoAlt || 'Logo'} 
+                        className="w-6 h-6 sm:w-7 sm:h-7 object-contain"
+                      />
+                    ) : (
+                      <FaStore className="w-6 h-6 sm:w-7 sm:h-7 text-white" />
+                    )}
+                  </div>
+                  <span className="text-lg sm:text-xl font-bold tracking-tight text-gray-900">
+                    {config?.websiteName || footerData.companyName || 'MUKHTI'}
+                  </span>
+                </div>
+                <p className="text-sm leading-relaxed mb-6 max-w-sm text-gray-600">
+                  {config?.websiteDescription || footerData.companyDescription || 'Gracefully unbound - Premium lifestyle and fashion destination'}
+                </p>
+                
+                {/* Social Media */}
+                <div className="flex items-center gap-3">
+                  {(config?.socialMedia?.facebook || footerData.socialMedia?.facebook) && (
+                    <a 
+                      href={config?.socialMedia?.facebook || footerData.socialMedia?.facebook}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      aria-label="Facebook" 
+                      className="inline-flex h-9 w-9 items-center justify-center rounded-xl bg-blue-50 text-blue-600 hover:bg-blue-100 hover:scale-110 transition-all duration-200 shadow-sm hover:shadow-md"
+                    >
+                      <FaFacebook className="w-4 h-4" />
+                    </a>
+                  )}
+                  {(config?.socialMedia?.twitter || footerData.socialMedia?.twitter) && (
+                    <a 
+                      href={config?.socialMedia?.twitter || footerData.socialMedia?.twitter}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      aria-label="Twitter" 
+                      className="inline-flex h-9 w-9 items-center justify-center rounded-xl bg-sky-50 text-sky-600 hover:bg-sky-100 hover:scale-110 transition-all duration-200 shadow-sm hover:shadow-md"
+                    >
+                      <FaTwitter className="w-4 h-4" />
+                    </a>
+                  )}
+                  {(config?.socialMedia?.instagram || footerData.socialMedia?.instagram) && (
+                    <a 
+                      href={config?.socialMedia?.instagram || footerData.socialMedia?.instagram}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      aria-label="Instagram" 
+                      className="inline-flex h-9 w-9 items-center justify-center rounded-xl bg-pink-50 text-pink-600 hover:bg-pink-100 hover:scale-110 transition-all duration-200 shadow-sm hover:shadow-md"
+                    >
+                      <FaInstagram className="w-4 h-4" />
+                    </a>
+                  )}
+                  {(config?.socialMedia?.linkedin || footerData.socialMedia?.linkedin) && (
+                    <a 
+                      href={config?.socialMedia?.linkedin || footerData.socialMedia?.linkedin}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      aria-label="LinkedIn" 
+                      className="inline-flex h-9 w-9 items-center justify-center rounded-xl bg-blue-50 text-blue-700 hover:bg-blue-100 hover:scale-110 transition-all duration-200 shadow-sm hover:shadow-md"
+                    >
+                      <FaLinkedin className="w-4 h-4" />
                     </a>
                   )}
                 </div>
@@ -110,60 +254,90 @@ const Footer = () => {
 
           {/* Quick Links */}
           <div>
-                <h4 className="text-xs sm:text-sm font-semibold text-white mb-3 sm:mb-4 flex items-center gap-2">
-                  <FaStar className="w-3 h-3 sm:w-4 sm:h-4 text-emerald-300" />
+                <h4 className="text-base font-semibold mb-4 flex items-center gap-2 text-gray-900">
+                  <FaHome className="w-4 h-4 text-blue-600" />
                   Quick Links
                 </h4>
-                <ul className="space-y-2 sm:space-y-3">
-                  {footerData.quickLinks.map((link, index) => (
-                    <li key={index}>
+                <ul className="space-y-3">
+                  <li>
+                    <Link 
+                      to="/" 
+                      className="text-sm text-gray-600 hover:text-blue-600 transition-colors duration-200 hover:underline underline-offset-2 flex items-center gap-2"
+                    >
+                      <FaHome className="w-3 h-3" />
+                      Home
+                    </Link>
+                  </li>
+                  <li>
+                    <Link 
+                      to="/products" 
+                      className="text-sm text-gray-600 hover:text-blue-600 transition-colors duration-200 hover:underline underline-offset-2 flex items-center gap-2"
+                    >
+                      <FaShoppingBag className="w-3 h-3" />
+                      Products
+                    </Link>
+                  </li>
+                  <li>
+                    <Link 
+                      to="/about" 
+                      className="text-sm text-gray-600 hover:text-blue-600 transition-colors duration-200 hover:underline underline-offset-2 flex items-center gap-2"
+                    >
+                      <FaUser className="w-3 h-3" />
+                      About Us
+                    </Link>
+                  </li>
+                  <li>
                       <Link 
-                        to={link.url} 
-                        className="text-xs sm:text-sm text-emerald-100 hover:text-white transition-colors duration-200 hover:underline underline-offset-2"
+                      to="/contact" 
+                      className="text-sm text-gray-600 hover:text-blue-600 transition-colors duration-200 hover:underline underline-offset-2 flex items-center gap-2"
                       >
-                        {link.title}
+                      <FaEnvelope className="w-3 h-3" />
+                      Contact
                       </Link>
                     </li>
-                  ))}
                 </ul>
           </div>
 
           {/* Customer Service */}
           <div>
-                <h4 className="text-xs sm:text-sm font-semibold text-white mb-3 sm:mb-4 flex items-center gap-2">
-                  <FaHeadset className="w-3 h-3 sm:w-4 sm:h-4 text-emerald-300" />
-                  Customer Service
+                <h4 className="text-base font-semibold mb-4 flex items-center gap-2 text-gray-900">
+                  <FaHeadset className="w-4 h-4 text-purple-600" />
+                  Support
                 </h4>
-                <ul className="space-y-2 sm:space-y-3">
+                <ul className="space-y-3">
                   <li>
                     <Link 
                       to="/help" 
-                      className="text-xs sm:text-sm text-emerald-100 hover:text-white transition-colors duration-200 hover:underline underline-offset-2"
+                      className="text-sm text-gray-600 hover:text-purple-600 transition-colors duration-200 hover:underline underline-offset-2 flex items-center gap-2"
                     >
+                      <FaQuestionCircle className="w-3 h-3" />
                       Help Center
                     </Link>
                   </li>
                   <li>
                     <Link 
                       to="/shipping" 
-                      className="text-xs sm:text-sm text-emerald-100 hover:text-white transition-colors duration-200 hover:underline underline-offset-2"
+                      className="text-sm text-gray-600 hover:text-purple-600 transition-colors duration-200 hover:underline underline-offset-2 flex items-center gap-2"
                     >
+                      <FaTruck className="w-3 h-3" />
                       Shipping Info
                     </Link>
                   </li>
                   <li>
                     <Link 
                       to="/returns" 
-                      className="text-xs sm:text-sm text-emerald-100 hover:text-white transition-colors duration-200 hover:underline underline-offset-2"
+                      className="text-sm text-gray-600 hover:text-purple-600 transition-colors duration-200 hover:underline underline-offset-2 flex items-center gap-2"
                     >
-                      Returns & Exchanges
+                      <FaGift className="w-3 h-3" />
+                      Returns
                     </Link>
                   </li>
                   <li>
                     <Link 
                       to="/privacy" 
-                      className="text-xs sm:text-sm text-emerald-100 hover:text-white transition-colors duration-200 hover:underline underline-offset-2"
+                      className="text-sm text-gray-600 hover:text-purple-600 transition-colors duration-200 hover:underline underline-offset-2 flex items-center gap-2"
                     >
+                      <FaShieldAlt className="w-3 h-3" />
                       Privacy Policy
                     </Link>
                   </li>
@@ -172,37 +346,45 @@ const Footer = () => {
 
               {/* Contact Info */}
           <div>
-                <h4 className="text-xs sm:text-sm font-semibold text-white mb-3 sm:mb-4 flex items-center gap-2">
-                  <FaEnvelope className="w-3 h-3 sm:w-4 sm:h-4 text-emerald-300" />
-                  Contact Info
+                <h4 className="text-base font-semibold mb-4 flex items-center gap-2 text-gray-900">
+                  <FaEnvelope className="w-4 h-4 text-cyan-600" />
+                  Contact
                 </h4>
-                <ul className="space-y-2 sm:space-y-3">
-                  <li className="flex items-start gap-2 sm:gap-3">
-                    <FaMapMarkerAlt className="w-3 h-3 sm:w-4 sm:h-4 text-emerald-300 mt-0.5 flex-shrink-0" />
-                    <span className="text-xs sm:text-sm text-emerald-100">
-                      {config?.contactAddress || (footerData.address ? `${footerData.address.street}, ${footerData.address.city}, ${footerData.address.state} ${footerData.address.zipCode}, ${footerData.address.country}` : '')}
+                <ul className="space-y-3">
+                  <li className="flex items-start gap-3">
+                    <FaMapMarkerAlt className="w-4 h-4 mt-0.5 flex-shrink-0 text-cyan-600" />
+                    <span className="text-sm text-gray-600 leading-relaxed">
+                      {config?.contactAddress || (footerData.address ? `${footerData.address.street}, ${footerData.address.city}, ${footerData.address.state} ${footerData.address.zipCode}, ${footerData.address.country}` : '123 Business St, City, State 12345')}
                     </span>
                   </li>
                   {(config?.contactPhone || footerData.contact?.phone) && (
-                    <li className="flex items-center gap-2 sm:gap-3">
-                      <FaPhone className="w-3 h-3 sm:w-4 sm:h-4 text-emerald-300 flex-shrink-0" />
+                    <li className="flex items-center gap-3">
+                      <FaPhone className="w-4 h-4 text-cyan-600 flex-shrink-0" />
                       <a 
                         href={`tel:${config?.contactPhone || footerData.contact?.phone}`}
-                        className="text-xs sm:text-sm text-emerald-100 hover:text-white transition-colors duration-200"
+                        className="text-sm text-gray-600 hover:text-cyan-600 transition-colors duration-200"
                       >
                         {config?.contactPhone || footerData.contact?.phone}
                       </a>
                     </li>
                   )}
                   {(config?.contactEmail || footerData.contact?.email) && (
-                    <li className="flex items-center gap-2 sm:gap-3">
-                      <FaEnvelope className="w-3 h-3 sm:w-4 sm:h-4 text-emerald-300 flex-shrink-0" />
+                    <li className="flex items-center gap-3">
+                      <FaEnvelope className="w-4 h-4 text-cyan-600 flex-shrink-0" />
                       <a 
                         href={`mailto:${config?.contactEmail || footerData.contact?.email}`}
-                        className="text-xs sm:text-sm text-emerald-100 hover:text-white transition-colors duration-200"
+                        className="text-sm text-gray-600 hover:text-cyan-600 transition-colors duration-200"
                       >
                         {config?.contactEmail || footerData.contact?.email}
                       </a>
+                    </li>
+                  )}
+                  {(config?.businessHours || footerData.businessHours) && (
+                    <li className="flex items-center gap-3">
+                      <FaClock className="w-4 h-4 text-cyan-600 flex-shrink-0" />
+                      <span className="text-sm text-gray-600">
+                        {config?.businessHours || footerData.businessHours}
+                      </span>
                     </li>
                   )}
             </ul>
@@ -210,75 +392,111 @@ const Footer = () => {
             </div>
           </div>
 
-          {/* Features Section */}
-          <div className="border-t border-emerald-700/30 py-4 sm:py-6">
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4">
-              <div className="flex items-center gap-2 sm:gap-3">
-                <div className="w-6 h-6 sm:w-8 sm:h-8 bg-emerald-500/20 rounded-lg sm:rounded-xl flex items-center justify-center">
-                  <FaTruck className="w-3 h-3 sm:w-4 sm:h-4 text-emerald-300" />
+          {/* Features Section - Desktop Only */}
+          <div className="hidden sm:block py-6 sm:py-8 border-t border-gray-200/50">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
+              <div className="flex items-center gap-3 p-4 bg-white/50 rounded-xl border border-gray-200/50 hover:shadow-md transition-all duration-200">
+                <div className="w-10 h-10 rounded-xl flex items-center justify-center bg-blue-100">
+                  <FaTruck className="w-5 h-5 text-blue-600" />
                 </div>
                 <div>
-                  <p className="text-xs sm:text-sm font-semibold text-white">Free Shipping</p>
-                  <p className="text-xs text-emerald-200">On orders over $50</p>
+                  <p className="text-sm font-semibold text-gray-900">Free Shipping</p>
+                  <p className="text-xs text-gray-600">On orders over ₹500</p>
                 </div>
               </div>
               
-              <div className="flex items-center gap-2 sm:gap-3">
-                <div className="w-6 h-6 sm:w-8 sm:h-8 bg-emerald-500/20 rounded-lg sm:rounded-xl flex items-center justify-center">
-                  <FaShieldAlt className="w-3 h-3 sm:w-4 sm:h-4 text-emerald-300" />
+              <div className="flex items-center gap-3 p-4 bg-white/50 rounded-xl border border-gray-200/50 hover:shadow-md transition-all duration-200">
+                <div className="w-10 h-10 rounded-xl flex items-center justify-center bg-purple-100">
+                  <FaShieldAlt className="w-5 h-5 text-purple-600" />
                 </div>
                 <div>
-                  <p className="text-xs sm:text-sm font-semibold text-white">Secure Payment</p>
-                  <p className="text-xs text-emerald-200">100% secure checkout</p>
+                  <p className="text-sm font-semibold text-gray-900">Secure Payment</p>
+                  <p className="text-xs text-gray-600">100% secure checkout</p>
                 </div>
               </div>
               
-              <div className="flex items-center gap-2 sm:gap-3">
-                <div className="w-6 h-6 sm:w-8 sm:h-8 bg-emerald-500/20 rounded-lg sm:rounded-xl flex items-center justify-center">
-                  <FaGift className="w-3 h-3 sm:w-4 sm:h-4 text-emerald-300" />
+              <div className="flex items-center gap-3 p-4 bg-white/50 rounded-xl border border-gray-200/50 hover:shadow-md transition-all duration-200">
+                <div className="w-10 h-10 rounded-xl flex items-center justify-center bg-cyan-100">
+                  <FaGift className="w-5 h-5 text-cyan-600" />
                 </div>
                 <div>
-                  <p className="text-xs sm:text-sm font-semibold text-white">Easy Returns</p>
-                  <p className="text-xs text-emerald-200">30 day return policy</p>
+                  <p className="text-sm font-semibold text-gray-900">Easy Returns</p>
+                  <p className="text-xs text-gray-600">30 day return policy</p>
                 </div>
               </div>
               
-              <div className="flex items-center gap-2 sm:gap-3">
-                <div className="w-6 h-6 sm:w-8 sm:h-8 bg-emerald-500/20 rounded-lg sm:rounded-xl flex items-center justify-center">
-                  <FaCreditCard className="w-3 h-3 sm:w-4 sm:h-4 text-emerald-300" />
+              <div className="flex items-center gap-3 p-4 bg-white/50 rounded-xl border border-gray-200/50 hover:shadow-md transition-all duration-200">
+                <div className="w-10 h-10 rounded-xl flex items-center justify-center bg-green-100">
+                  <FaAward className="w-5 h-5 text-green-600" />
                 </div>
                 <div>
-                  <p className="text-xs sm:text-sm font-semibold text-white">Multiple Payment</p>
-                  <p className="text-xs text-emerald-200">Credit card, PayPal</p>
+                  <p className="text-sm font-semibold text-gray-900">Premium Quality</p>
+                  <p className="text-xs text-gray-600">Handpicked products</p>
                 </div>
               </div>
           </div>
         </div>
 
           {/* Bottom Section */}
-          <div className="border-t border-emerald-700/30 py-4 sm:py-6">
-            <div className="flex flex-col sm:flex-row items-center justify-between gap-3 sm:gap-4">
-              <p className="text-xs sm:text-sm text-emerald-200 text-center sm:text-left">
-                {footerData.copyrightText.replace('{year}', year)} Made with{' '}
-                <FaHeart className="inline w-3 h-3 sm:w-4 sm:h-4 text-red-400" />{' '}
-                for our customers.
+          <div className="border-t border-gray-200/50 py-4 sm:py-6 lg:py-8">
+            {/* Mobile Layout */}
+            <div className="block sm:hidden text-center space-y-3">
+              <p className="text-xs text-gray-600">
+                © {year} {config?.websiteName || footerData.companyName || 'MUKHTI'}. All rights reserved.
               </p>
-              <div className="flex flex-wrap items-center justify-center gap-3 sm:gap-4 text-xs sm:text-sm">
+              <p className="text-xs text-gray-500 flex items-center justify-center gap-1">
+                Made with <FaHeart className="w-3 h-3 text-red-500" /> for our customers
+              </p>
+              <div className="flex flex-wrap items-center justify-center gap-3 text-xs">
                 <Link 
                   to="/terms" 
-                  className="text-emerald-200 hover:text-white transition-colors duration-200 hover:underline underline-offset-2"
+                  className="text-gray-600 hover:text-blue-600 transition-colors duration-200"
+                >
+                  Terms
+                </Link>
+                <span className="text-gray-300">•</span>
+                <Link 
+                  to="/privacy" 
+                  className="text-gray-600 hover:text-blue-600 transition-colors duration-200"
+                >
+                  Privacy
+                </Link>
+                <span className="text-gray-300">•</span>
+                <Link 
+                  to="/cookies" 
+                  className="text-gray-600 hover:text-blue-600 transition-colors duration-200"
+                >
+                  Cookies
+                </Link>
+              </div>
+            </div>
+
+            {/* Desktop Layout */}
+            <div className="hidden sm:flex sm:flex-row items-center justify-between gap-4">
+              <div className="flex flex-col sm:flex-row items-center gap-2 sm:gap-4">
+                <p className="text-sm text-gray-600 text-center sm:text-left">
+                  © {year} {config?.websiteName || footerData.companyName || 'MUKHTI'}. All rights reserved.
+                </p>
+                <p className="text-sm text-gray-500 flex items-center gap-1">
+                  Made with <FaHeart className="w-3 h-3 text-red-500" /> for our customers
+                </p>
+              </div>
+              <div className="flex flex-wrap items-center justify-center gap-4 text-sm">
+                <Link 
+                  to="/terms" 
+                  className="text-gray-600 hover:text-blue-600 transition-colors duration-200 hover:underline underline-offset-2"
                 >
                   Terms of Service
                 </Link>
                 <Link 
                   to="/privacy" 
-                  className="text-emerald-200 hover:text-white transition-colors duration-200 hover:underline underline-offset-2"
+                  className="text-gray-600 hover:text-blue-600 transition-colors duration-200 hover:underline underline-offset-2"
                 >
                   Privacy Policy
                 </Link>
                 <Link 
                   to="/cookies" 
-                  className="text-emerald-200 hover:text-white transition-colors duration-200 hover:underline underline-offset-2"
+                  className="text-gray-600 hover:text-blue-600 transition-colors duration-200 hover:underline underline-offset-2"
                 >
                   Cookie Policy
                 </Link>
@@ -291,10 +509,10 @@ const Footer = () => {
       {/* Scroll to Top Button */}
       <button
         onClick={scrollToTop}
-        className="fixed bottom-4 right-4 z-40 inline-flex h-10 w-10 sm:h-12 sm:w-12 items-center justify-center rounded-full bg-gradient-to-r from-emerald-500 to-teal-500 text-white shadow-lg hover:from-emerald-600 hover:to-teal-600 transition-all duration-200 hover:scale-110 hover:shadow-xl"
+        className="fixed bottom-6 right-6 z-40 inline-flex h-12 w-12 items-center justify-center rounded-full bg-gradient-to-br from-blue-600 to-purple-600 text-white shadow-lg transition-all duration-200 hover:scale-110 hover:shadow-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20"
         aria-label="Scroll to top"
       >
-        <FaArrowUp className="w-4 h-4 sm:w-5 sm:h-5" />
+        <FaArrowUp className="w-5 h-5" />
       </button>
     </footer>
   );

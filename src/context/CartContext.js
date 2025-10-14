@@ -135,7 +135,7 @@ export const CartProvider = ({ children }) => {
         payload: res.data
       });
 
-      toast.success('Item added to cart successfully!');
+      // Toast will be shown by the calling component (ProductCard)
       return { success: true };
     } catch (error) {
       const message = error.response?.data?.message || 'Failed to add item to cart';
@@ -166,11 +166,7 @@ export const CartProvider = ({ children }) => {
         payload: res.data
       });
 
-      if (quantity <= 0) {
-        toast.success('Item removed from cart');
-      } else {
-        toast.success('Cart updated successfully');
-      }
+      // Toast will be shown by the calling component if needed
 
       return { success: true };
     } catch (error) {
@@ -197,7 +193,7 @@ export const CartProvider = ({ children }) => {
         payload: res.data
       });
 
-      toast.success('Item removed from cart');
+      // Toast will be shown by the calling component if needed
       return { success: true };
     } catch (error) {
       const message = error.response?.data?.message || 'Failed to remove item from cart';
@@ -219,7 +215,7 @@ export const CartProvider = ({ children }) => {
       await axios.delete('/api/cart/clear');
       
       dispatch({ type: 'CLEAR_CART' });
-      toast.success('Cart cleared successfully');
+      // Toast will be shown by the calling component if needed
       return { success: true };
     } catch (error) {
       const message = error.response?.data?.message || 'Failed to clear cart';

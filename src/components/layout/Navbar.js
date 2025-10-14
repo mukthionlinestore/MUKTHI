@@ -4,6 +4,7 @@ import { useAuth } from '../../context/AuthContext';
 import { useCart } from '../../context/CartContext';
 import { useWishlist } from '../../context/WishlistContext';
 import { useWebsiteConfig } from '../../context/WebsiteConfigContext';
+import { useNotifications } from '../../context/NotificationContext';
 import { 
   FaShoppingCart, 
   FaHeart, 
@@ -28,10 +29,12 @@ import {
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
+  const [isScrolled, setIsScrolled] = useState(false);
   const { user, isAuthenticated, logout } = useAuth();
   const { totalItems } = useCart();
   const { products: wishlistItems } = useWishlist();
   const { config, isFeatureEnabled } = useWebsiteConfig();
+  const { unreadCount } = useNotifications();
   const navigate = useNavigate();
   const location = useLocation();
   const userMenuRef = useRef(null);
@@ -41,6 +44,17 @@ const Navbar = () => {
     setIsMenuOpen(false);
     setIsUserMenuOpen(false);
   }, [location]);
+
+  // Scroll detection for navbar background
+  useEffect(() => {
+    const handleScroll = () => {
+      const scrollTop = window.scrollY;
+      setIsScrolled(scrollTop > 10);
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
   // Close user dropdown on outside click / Escape
   useEffect(() => {
@@ -70,7 +84,7 @@ const Navbar = () => {
 
   const Counter = ({ count }) => (
     count > 0 ? (
-      <span className="absolute -top-1 -right-1 inline-flex h-4 w-4 sm:h-5 sm:w-5 items-center justify-center rounded-full bg-red-500 text-[8px] sm:text-[10px] font-bold text-white shadow-sm">
+      <span className="absolute -top-1 -right-1 inline-flex h-5 w-5 items-center justify-center rounded-full bg-red-500 text-[10px] font-bold text-white shadow-lg">
         {count > 99 ? '99+' : count}
       </span>
     ) : null
@@ -84,40 +98,57 @@ const Navbar = () => {
   };
 
   return (
-    <header className="sticky top-0 z-50 w-full bg-gradient-to-r from-emerald-600 via-teal-600 to-cyan-600 text-white shadow-lg backdrop-blur-sm">
-      <nav className="mx-auto max-w-7xl px-2 sm:px-4 lg:px-6">
-        <div className="flex h-12 sm:h-14 lg:h-16 items-center justify-between">
+    <header className={`sticky top-0 z-50 w-full transition-all duration-300 ${
+      isScrolled 
+        ? 'bg-white/10 backdrop-blur-md border-b border-white/20' 
+        : 'bg-transparent'
+    }`}>
+      {/* Glass morphism background with blur effect - only when scrolled */}
+      {isScrolled && (
+        <div className="absolute inset-0 bg-gradient-to-r from-white/5 to-white/10 backdrop-blur-md"></div>
+      )}
+      
+      <nav className="relative z-10 mx-auto max-w-7xl px-3 sm:px-4 lg:px-6">
+        <div className="flex h-14 sm:h-16 lg:h-18 items-center justify-between">
           {/* Left: Brand & mobile toggle */}
-          <div className="flex items-center gap-2 sm:gap-3">
+          <div className="flex items-center gap-3 sm:gap-4">
             <button
-              className="inline-flex h-8 w-8 sm:h-9 sm:w-9 lg:h-10 lg:w-10 items-center justify-center rounded-lg sm:rounded-xl bg-white/10 backdrop-blur transition-all duration-200 hover:bg-white/20 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-white/40 lg:hidden"
+              className="lg:hidden inline-flex h-8 w-8 items-center justify-center rounded-xl bg-white/40 backdrop-blur-sm border border-gray-200/30 shadow-sm hover:shadow-md transition-all duration-200 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
               onClick={() => setIsMenuOpen((s) => !s)}
               aria-label="Toggle menu"
               aria-expanded={isMenuOpen}
             >
               {isMenuOpen ? (
-                <FaTimes className="w-3 h-3 sm:w-4 sm:h-4" />
+                <FaTimes className="w-3 h-3 text-gray-700" />
               ) : (
-                <FaBars className="w-3 h-3 sm:w-4 sm:h-4" />
+                <FaBars className="w-3 h-3 text-gray-700" />
               )}
             </button>
 
-            <Link to="/" className="group inline-flex items-center gap-1.5 sm:gap-2">
-              <div className="grid h-7 w-7 sm:h-8 sm:w-8 lg:h-9 lg:w-9 place-items-center rounded-lg sm:rounded-xl bg-white text-emerald-700 font-extrabold shadow-sm transition-transform group-hover:scale-105">
-                <FaStore className="w-3 h-3 sm:w-4 sm:h-4" />
-              </div>
-              <span className="text-sm sm:text-base lg:text-lg font-bold tracking-tight drop-shadow-sm">
-                {config?.websiteName || 'E‑Shop'}
+              <Link to="/" className="group inline-flex items-center gap-2 sm:gap-3">
+                {config?.websiteLogo ? (
+                  <img 
+                    src={config.websiteLogo} 
+                    alt={config.logoAlt || 'Logo'} 
+                    className="w-8 h-8 sm:w-12 sm:h-12 lg:w-14 lg:h-14 object-contain transition-all duration-300 group-hover:scale-105"
+                  />
+                ) : (
+                  <FaStore className="w-8 h-8 sm:w-12 sm:h-12 lg:w-14 lg:h-14 text-gray-800 transition-all duration-300 group-hover:scale-105" />
+                )}
+                <span className="text-lg sm:text-xl font-bold text-gray-900 group-hover:text-blue-600 transition-colors duration-200">
+                {config?.websiteName || 'MUKHTI'}
               </span>
             </Link>
           </div>
 
           {/* Center: Navigation (desktop) */}
-          <div className="hidden lg:flex items-center space-x-1">
+          <div className="hidden lg:flex items-center space-x-2">
             <Link
               to="/"
-              className={`inline-flex items-center gap-1.5 px-3 py-2 text-xs sm:text-sm font-medium rounded-lg transition-all duration-200 hover:bg-white/10 hover:scale-105 ${
-                isActive('/') ? 'bg-white/20 text-white' : 'text-white/90 hover:text-white'
+              className={`inline-flex items-center gap-2 px-4 py-2.5 text-sm font-semibold rounded-xl transition-all duration-200 hover:scale-105 ${
+                isActive('/') 
+                  ? 'bg-white/60 backdrop-blur-sm shadow-lg text-blue-600 border border-blue-200/30' 
+                  : 'text-gray-700 hover:bg-white/40 hover:text-blue-600 hover:shadow-md'
               }`}
             >
               <FaHome className="w-3 h-3 sm:w-4 sm:h-4" />
@@ -125,8 +156,10 @@ const Navbar = () => {
             </Link>
             <Link
               to="/products"
-              className={`inline-flex items-center gap-1.5 px-3 py-2 text-xs sm:text-sm font-medium rounded-lg transition-all duration-200 hover:bg-white/10 hover:scale-105 ${
-                isActive('/products') ? 'bg-white/20 text-white' : 'text-white/90 hover:text-white'
+              className={`inline-flex items-center gap-2 px-4 py-2.5 text-sm font-semibold rounded-xl transition-all duration-200 hover:scale-105 ${
+                isActive('/products') 
+                  ? 'bg-white/60 backdrop-blur-sm shadow-lg text-blue-600 border border-blue-200/30' 
+                  : 'text-gray-700 hover:bg-white/40 hover:text-blue-600 hover:shadow-md'
               }`}
             >
               <FaStore className="w-3 h-3 sm:w-4 sm:h-4" />
@@ -134,8 +167,10 @@ const Navbar = () => {
             </Link>
             <Link
               to="/about"
-              className={`inline-flex items-center gap-1.5 px-3 py-2 text-xs sm:text-sm font-medium rounded-lg transition-all duration-200 hover:bg-white/10 hover:scale-105 ${
-                isActive('/about') ? 'bg-white/20 text-white' : 'text-white/90 hover:text-white'
+              className={`inline-flex items-center gap-2 px-4 py-2.5 text-sm font-semibold rounded-xl transition-all duration-200 hover:scale-105 ${
+                isActive('/about') 
+                  ? 'bg-white/60 backdrop-blur-sm shadow-lg text-blue-600 border border-blue-200/30' 
+                  : 'text-gray-700 hover:bg-white/40 hover:text-blue-600 hover:shadow-md'
               }`}
             >
               <FaUser className="w-3 h-3 sm:w-4 sm:h-4" />
@@ -144,28 +179,31 @@ const Navbar = () => {
             </div>
 
           {/* Right: Actions */}
-          <div className="flex items-center gap-1 sm:gap-2">
+          <div className="flex items-center gap-2 sm:gap-3">
             {/* Notification Bell */}
-            <button className="relative inline-flex h-8 w-8 sm:h-9 sm:w-9 lg:h-10 lg:w-10 items-center justify-center rounded-lg sm:rounded-xl bg-white/10 backdrop-blur transition-all duration-200 hover:bg-white/20 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-white/40">
-              <FaBell className="w-3 h-3 sm:w-4 sm:h-4" />
-              <span className="absolute -top-0.5 -right-0.5 h-2 w-2 sm:h-2.5 sm:w-2.5 bg-yellow-400 rounded-full"></span>
-            </button>
+            <Link
+              to="/notifications"
+              className="relative inline-flex h-8 w-8 sm:h-11 sm:w-11 items-center justify-center rounded-xl bg-white/40 backdrop-blur-sm border border-gray-200/30 shadow-sm hover:shadow-md transition-all duration-200 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
+            >
+              <FaBell className="w-3 h-3 sm:w-4 sm:h-4 text-gray-700" />
+              <Counter count={unreadCount} />
+            </Link>
 
             {/* Wishlist */}
             <Link
               to="/wishlist"
-              className="relative inline-flex h-8 w-8 sm:h-9 sm:w-9 lg:h-10 lg:w-10 items-center justify-center rounded-lg sm:rounded-xl bg-white/10 backdrop-blur transition-all duration-200 hover:bg-white/20 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-white/40"
+              className="relative inline-flex h-8 w-8 sm:h-11 sm:w-11 items-center justify-center rounded-xl bg-white/40 backdrop-blur-sm border border-gray-200/30 shadow-sm hover:shadow-md transition-all duration-200 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-pink-500/20"
             >
-              <FaHeart className="w-3 h-3 sm:w-4 sm:h-4" />
+              <FaHeart className="w-3 h-3 sm:w-4 sm:h-4 text-gray-700" />
               <Counter count={wishlistItems.length} />
             </Link>
 
             {/* Cart */}
             <Link
               to="/cart"
-              className="relative inline-flex h-8 w-8 sm:h-9 sm:w-9 lg:h-10 lg:w-10 items-center justify-center rounded-lg sm:rounded-xl bg-white/10 backdrop-blur transition-all duration-200 hover:bg-white/20 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-white/40"
+              className="relative inline-flex h-8 w-8 sm:h-11 sm:w-11 items-center justify-center rounded-xl bg-white/40 backdrop-blur-sm border border-gray-200/30 shadow-sm hover:shadow-md transition-all duration-200 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
             >
-              <FaShoppingCart className="w-3 h-3 sm:w-4 sm:h-4" />
+              <FaShoppingCart className="w-3 h-3 sm:w-4 sm:h-4 text-gray-700" />
               <Counter count={totalItems} />
             </Link>
 
@@ -173,15 +211,15 @@ const Navbar = () => {
             {isAuthenticated ? (
               <div className="relative" ref={userMenuRef}>
                 <button
-                  className="inline-flex items-center gap-1.5 sm:gap-2 rounded-lg sm:rounded-xl bg-white/10 p-1.5 sm:p-2 backdrop-blur transition-all duration-200 hover:bg-white/20 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-white/40"
+                  className="inline-flex items-center gap-1 sm:gap-3 rounded-xl px-2 sm:px-3 py-2 sm:py-2.5 bg-white/40 backdrop-blur-sm border border-gray-200/30 shadow-sm hover:shadow-md transition-all duration-200 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
                   onClick={() => setIsUserMenuOpen((s) => !s)}
                   aria-haspopup="menu"
                   aria-expanded={isUserMenuOpen}
                 >
-                  <div className="grid h-5 w-5 sm:h-6 sm:w-6 lg:h-7 lg:w-7 place-items-center rounded-full bg-white text-emerald-700">
-                    <FaUser className="w-2.5 h-2.5 sm:w-3 sm:h-3" />
+                  <div className="grid h-6 w-6 sm:h-9 sm:w-9 place-items-center rounded-full bg-gradient-to-br from-blue-600 to-purple-600 shadow-sm">
+                    <FaUser className="w-2.5 h-2.5 sm:w-4 sm:h-4 text-white" />
                   </div>
-                  <span className="hidden sm:inline max-w-[8rem] truncate text-xs sm:text-sm font-medium">
+                  <span className="hidden sm:inline max-w-[8rem] truncate text-sm font-semibold text-gray-900">
                     {user?.name}
                   </span>
                 </button>
@@ -189,63 +227,76 @@ const Navbar = () => {
                 {isUserMenuOpen && (
                   <div
                     role="menu"
-                    className="absolute right-0 mt-2 w-48 sm:w-56 overflow-hidden rounded-xl border border-white/20 bg-white/95 p-1.5 text-slate-800 shadow-xl backdrop-blur animate-in fade-in-0 zoom-in-95"
+                    className="absolute right-0 mt-3 w-56 overflow-hidden rounded-2xl border border-white/20 bg-white/10 shadow-2xl backdrop-blur-md"
                   >
+                    <div className="p-2">
                     <Link 
                       to="/profile" 
-                      className="flex items-center gap-2 rounded-lg px-3 py-2 text-xs sm:text-sm hover:bg-slate-100 transition-colors"
+                        className="flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors"
                     >
-                      <FaUserCircle className="w-3 h-3 sm:w-4 sm:h-4" /> 
+                        <FaUserCircle className="w-3 h-3 sm:w-4 sm:h-4 text-blue-600" /> 
                       Profile
                     </Link>
                     <Link 
                       to="/orders" 
-                      className="flex items-center gap-2 rounded-lg px-3 py-2 text-xs sm:text-sm hover:bg-slate-100 transition-colors"
+                        className="flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors"
                     >
-                      <FaShoppingCart className="w-3 h-3 sm:w-4 sm:h-4" /> 
+                        <FaShoppingCart className="w-3 h-3 sm:w-4 sm:h-4 text-green-600" /> 
                       Orders
                     </Link>
                     {user?.role === 'admin' && (
                       <Link 
                         to="/admin" 
-                        className="flex items-center gap-2 rounded-lg px-3 py-2 text-xs sm:text-sm hover:bg-slate-100 transition-colors"
+                          className="flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors"
                       >
-                        <FaCog className="w-3 h-3 sm:w-4 sm:h-4" /> 
+                          <FaCog className="w-3 h-3 sm:w-4 sm:h-4 text-purple-600" /> 
                         Admin Panel
                       </Link>
                     )}
                     {user?.role === 'superadmin' && (
                       <Link 
                         to="/superadmin/dashboard" 
-                        className="flex items-center gap-2 rounded-lg px-3 py-2 text-xs sm:text-sm hover:bg-slate-100 transition-colors"
+                          className="flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors"
                       >
-                        <FaShieldAlt className="w-3 h-3 sm:w-4 sm:h-4" /> 
+                          <FaShieldAlt className="w-3 h-3 sm:w-4 sm:h-4 text-orange-600" /> 
                         Super Admin
                       </Link>
                     )}
+                      <div className="border-t border-gray-100 my-1"></div>
                     <button 
                       onClick={handleLogout} 
-                      className="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-left text-xs sm:text-sm hover:bg-slate-100 transition-colors"
+                        className="flex w-full items-center gap-3 rounded-xl px-4 py-3 text-left text-sm font-medium text-red-600 hover:bg-red-50 transition-colors"
                     >
-                      <FaSignOutAlt className="w-3 h-3 sm:w-4 sm:h-4" /> 
+                        <FaSignOutAlt className="w-3 h-3 sm:w-4 sm:h-4" /> 
                       Logout
                     </button>
+                    </div>
                   </div>
                 )}
               </div>
             ) : (
-              <div className="hidden items-center gap-1.5 sm:gap-2 md:flex">
+              <div className="hidden items-center gap-2 sm:gap-3 md:flex">
                 <Link
                   to="/login"
-                  className="rounded-lg sm:rounded-xl bg-white/90 px-2.5 sm:px-3 py-1.5 sm:py-2 text-xs sm:text-sm font-semibold text-emerald-700 shadow transition-all duration-200 hover:bg-white hover:scale-105"
+                  className="px-4 py-2.5 text-sm font-semibold text-white bg-gradient-to-r from-gray-700 via-gray-800 to-black hover:from-gray-800 hover:via-gray-900 hover:to-gray-800 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-200 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-gray-500/20 flex items-center justify-between gap-2"
                 >
-                  Login
+                  <span>Login</span>
+                  <div className="w-4 h-4 bg-white rounded-full flex items-center justify-center">
+                    <svg className="w-2 h-2 text-black" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                    </svg>
+                  </div>
                 </Link>
                 <Link
                   to="/register"
-                  className="rounded-lg sm:rounded-xl border border-white/60 px-2.5 sm:px-3 py-1.5 sm:py-2 text-xs sm:text-sm font-semibold text-white backdrop-blur transition-all duration-200 hover:bg-white/10 hover:scale-105"
+                  className="px-4 py-2.5 text-sm font-semibold text-white bg-gradient-to-r from-gray-700 via-gray-800 to-black hover:from-gray-800 hover:via-gray-900 hover:to-gray-800 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-200 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-gray-500/20 flex items-center justify-between gap-2"
                 >
-                  Register
+                  <span>Register</span>
+                  <div className="w-4 h-4 bg-white rounded-full flex items-center justify-center">
+                    <svg className="w-2 h-2 text-black" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                    </svg>
+                  </div>
                 </Link>
               </div>
             )}
@@ -254,15 +305,17 @@ const Navbar = () => {
 
         {/* Mobile drawer */}
         {isMenuOpen && (
-          <div className="origin-top animate-in fade-in-0 zoom-in-95">
-            <div className="mt-2 sm:mt-3 rounded-xl border border-white/25 bg-white/95 p-3 sm:p-4 text-slate-800 shadow-2xl backdrop-blur lg:hidden">
-              <div className="grid gap-1 sm:gap-2">
+          <div className="lg:hidden">
+            <div className="mt-3 rounded-2xl border border-white/20 bg-white/10 backdrop-blur-md p-4 shadow-2xl">
+              <div className="space-y-2">
                 {/* Navigation Links */}
                 <Link 
                   to="/" 
                   onClick={() => setIsMenuOpen(false)} 
-                  className={`flex items-center gap-2 rounded-lg px-3 py-2 text-xs sm:text-sm font-medium transition-colors ${
-                    isActive('/') ? 'bg-emerald-100 text-emerald-700' : 'hover:bg-slate-100'
+                  className={`flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-semibold transition-all duration-200 ${
+                    isActive('/') 
+                      ? 'bg-blue-50 text-blue-600 border border-blue-200' 
+                      : 'text-gray-700 hover:bg-gray-50'
                   }`}
                 >
                   <FaHome className="w-3 h-3 sm:w-4 sm:h-4" /> 
@@ -271,8 +324,10 @@ const Navbar = () => {
                 <Link 
                   to="/products" 
                   onClick={() => setIsMenuOpen(false)} 
-                  className={`flex items-center gap-2 rounded-lg px-3 py-2 text-xs sm:text-sm font-medium transition-colors ${
-                    isActive('/products') ? 'bg-emerald-100 text-emerald-700' : 'hover:bg-slate-100'
+                  className={`flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-semibold transition-all duration-200 ${
+                    isActive('/products') 
+                      ? 'bg-blue-50 text-blue-600 border border-blue-200' 
+                      : 'text-gray-700 hover:bg-gray-50'
                   }`}
                 >
                   <FaStore className="w-3 h-3 sm:w-4 sm:h-4" /> 
@@ -281,30 +336,49 @@ const Navbar = () => {
                 <Link 
                   to="/about" 
                   onClick={() => setIsMenuOpen(false)} 
-                  className={`flex items-center gap-2 rounded-lg px-3 py-2 text-xs sm:text-sm font-medium transition-colors ${
-                    isActive('/about') ? 'bg-emerald-100 text-emerald-700' : 'hover:bg-slate-100'
+                  className={`flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-semibold transition-all duration-200 ${
+                    isActive('/about') 
+                      ? 'bg-blue-50 text-blue-600 border border-blue-200' 
+                      : 'text-gray-700 hover:bg-gray-50'
                   }`}
                 >
                   <FaUser className="w-3 h-3 sm:w-4 sm:h-4" /> 
                   About
                 </Link>
 
+                {/* Notifications */}
+                <Link 
+                  to="/notifications" 
+                  onClick={() => setIsMenuOpen(false)} 
+                  className="flex items-center justify-between rounded-xl px-4 py-3 text-sm font-semibold text-gray-700 hover:bg-gray-50 transition-all duration-200"
+                >
+                  <div className="flex items-center gap-3">
+                    <FaBell className="w-3 h-3 sm:w-4 sm:h-4 text-blue-600" /> 
+                    Notifications
+                  </div>
+                  {unreadCount > 0 && (
+                    <span className="inline-flex h-5 w-5 items-center justify-center rounded-full bg-red-500 text-[10px] font-bold text-white">
+                      {unreadCount > 99 ? '99+' : unreadCount}
+                    </span>
+                  )}
+                </Link>
+
                 {/* Divider */}
-                <div className="border-t border-slate-200 my-1"></div>
+                <div className="border-t border-gray-200 my-2"></div>
 
                 {/* User Actions */}
                 {isFeatureEnabled('wishlist') && (
                   <Link 
                     to="/wishlist" 
                     onClick={() => setIsMenuOpen(false)} 
-                    className="flex items-center justify-between rounded-lg px-3 py-2 text-xs sm:text-sm font-medium hover:bg-slate-100 transition-colors"
+                    className="flex items-center justify-between rounded-xl px-4 py-3 text-sm font-semibold text-gray-700 hover:bg-gray-50 transition-all duration-200"
                   >
-                    <div className="flex items-center gap-2">
-                      <FaHeart className="w-3 h-3 sm:w-4 sm:h-4" /> 
+                    <div className="flex items-center gap-3">
+                      <FaHeart className="w-3 h-3 sm:w-4 sm:h-4 text-pink-600" /> 
                       Wishlist
                   </div>
                     {wishlistItems.length > 0 && (
-                      <span className="inline-flex h-4 w-4 sm:h-5 sm:w-5 items-center justify-center rounded-full bg-red-500 text-[8px] sm:text-[10px] font-bold text-white">
+                      <span className="inline-flex h-5 w-5 items-center justify-center rounded-full bg-red-500 text-[10px] font-bold text-white">
                         {wishlistItems.length > 99 ? '99+' : wishlistItems.length}
                       </span>
                     )}
@@ -313,14 +387,14 @@ const Navbar = () => {
                 <Link 
                   to="/cart" 
                   onClick={() => setIsMenuOpen(false)} 
-                  className="flex items-center justify-between rounded-lg px-3 py-2 text-xs sm:text-sm font-medium hover:bg-slate-100 transition-colors"
+                  className="flex items-center justify-between rounded-xl px-4 py-3 text-sm font-semibold text-gray-700 hover:bg-gray-50 transition-all duration-200"
                 >
-                  <div className="flex items-center gap-2">
-                    <FaShoppingCart className="w-3 h-3 sm:w-4 sm:h-4" /> 
+                  <div className="flex items-center gap-3">
+                    <FaShoppingCart className="w-3 h-3 sm:w-4 sm:h-4 text-blue-600" /> 
                     Cart
                   </div>
                   {totalItems > 0 && (
-                    <span className="inline-flex h-4 w-4 sm:h-5 sm:w-5 items-center justify-center rounded-full bg-red-500 text-[8px] sm:text-[10px] font-bold text-white">
+                    <span className="inline-flex h-5 w-5 items-center justify-center rounded-full bg-red-500 text-[10px] font-bold text-white">
                       {totalItems > 99 ? '99+' : totalItems}
                     </span>
                   )}
@@ -328,30 +402,30 @@ const Navbar = () => {
 
                 {isAuthenticated ? (
                   <>
-                    <div className="border-t border-slate-200 my-1"></div>
+                    <div className="border-t border-gray-200 my-2"></div>
                     <Link 
                       to="/profile" 
                       onClick={() => setIsMenuOpen(false)} 
-                      className="flex items-center gap-2 rounded-lg px-3 py-2 text-xs sm:text-sm font-medium hover:bg-slate-100 transition-colors"
+                      className="flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-semibold text-gray-700 hover:bg-gray-50 transition-all duration-200"
                     >
-                      <FaUserCircle className="w-3 h-3 sm:w-4 sm:h-4" /> 
+                      <FaUserCircle className="w-3 h-3 sm:w-4 sm:h-4 text-blue-600" /> 
                       Profile
                     </Link>
                     <Link 
                       to="/orders" 
                       onClick={() => setIsMenuOpen(false)} 
-                      className="flex items-center gap-2 rounded-lg px-3 py-2 text-xs sm:text-sm font-medium hover:bg-slate-100 transition-colors"
+                      className="flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-semibold text-gray-700 hover:bg-gray-50 transition-all duration-200"
                     >
-                      <FaShoppingCart className="w-3 h-3 sm:w-4 sm:h-4" /> 
+                      <FaShoppingCart className="w-3 h-3 sm:w-4 sm:h-4 text-green-600" /> 
                       Orders
                     </Link>
                     {user?.role === 'admin' && (
                       <Link 
                         to="/admin" 
                         onClick={() => setIsMenuOpen(false)} 
-                        className="flex items-center gap-2 rounded-lg px-3 py-2 text-xs sm:text-sm font-medium hover:bg-slate-100 transition-colors"
+                        className="flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-semibold text-gray-700 hover:bg-gray-50 transition-all duration-200"
                       >
-                        <FaCog className="w-3 h-3 sm:w-4 sm:h-4" /> 
+                        <FaCog className="w-3 h-3 sm:w-4 sm:h-4 text-purple-600" /> 
                         Admin Panel
                       </Link>
                     )}
@@ -359,15 +433,16 @@ const Navbar = () => {
                       <Link 
                         to="/superadmin/dashboard" 
                         onClick={() => setIsMenuOpen(false)} 
-                        className="flex items-center gap-2 rounded-lg px-3 py-2 text-xs sm:text-sm font-medium hover:bg-slate-100 transition-colors"
+                        className="flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-semibold text-gray-700 hover:bg-gray-50 transition-all duration-200"
                       >
-                        <FaShieldAlt className="w-3 h-3 sm:w-4 sm:h-4" /> 
+                        <FaShieldAlt className="w-3 h-3 sm:w-4 sm:h-4 text-orange-600" /> 
                         Super Admin
                       </Link>
                     )}
+                    <div className="border-t border-gray-200 my-2"></div>
                     <button 
                       onClick={handleLogout} 
-                      className="flex items-center gap-2 rounded-lg px-3 py-2 text-left text-xs sm:text-sm font-medium hover:bg-slate-100 transition-colors"
+                      className="flex items-center gap-3 rounded-xl px-4 py-3 text-left text-sm font-semibold text-red-600 hover:bg-red-50 transition-all duration-200"
                     >
                       <FaSignOutAlt className="w-3 h-3 sm:w-4 sm:h-4" /> 
                       Logout
@@ -375,20 +450,30 @@ const Navbar = () => {
                   </>
                 ) : (
                   <>
-                    <div className="border-t border-slate-200 my-1"></div>
+                    <div className="border-t border-gray-200 my-2"></div>
                     <Link 
                       to="/login" 
                       onClick={() => setIsMenuOpen(false)} 
-                      className="flex items-center justify-center rounded-lg bg-emerald-600 px-3 py-2 text-xs sm:text-sm font-semibold text-white hover:bg-emerald-700 transition-colors"
+                      className="flex items-center justify-between rounded-2xl px-4 py-3 text-sm font-semibold text-white bg-gradient-to-r from-gray-700 via-gray-800 to-black hover:from-gray-800 hover:via-gray-900 hover:to-gray-800 shadow-lg hover:shadow-xl transition-all duration-200"
                     >
-                      Login
+                      <span>Login</span>
+                      <div className="w-4 h-4 bg-white rounded-full flex items-center justify-center">
+                        <svg className="w-2 h-2 text-black" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                        </svg>
+                      </div>
                     </Link>
                     <Link 
                       to="/register" 
                       onClick={() => setIsMenuOpen(false)} 
-                      className="flex items-center justify-center rounded-lg border border-slate-300 px-3 py-2 text-xs sm:text-sm font-semibold hover:bg-slate-50 transition-colors"
+                      className="flex items-center justify-between rounded-2xl px-4 py-3 text-sm font-semibold text-white bg-gradient-to-r from-gray-700 via-gray-800 to-black hover:from-gray-800 hover:via-gray-900 hover:to-gray-800 shadow-lg hover:shadow-xl transition-all duration-200"
                     >
-                      Register
+                      <span>Register</span>
+                      <div className="w-4 h-4 bg-white rounded-full flex items-center justify-center">
+                        <svg className="w-2 h-2 text-black" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                        </svg>
+                      </div>
                     </Link>
                   </>
                 )}

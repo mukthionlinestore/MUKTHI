@@ -125,7 +125,7 @@ const AdminFooter = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-50 flex items-center justify-center">
+      <div className="min-h-screen  flex items-center justify-center">
         <div className="text-center">
           <FaSpinner className="w-8 h-8 sm:w-12 sm:h-12 text-blue-600 animate-spin mx-auto mb-4" />
           <p className="text-sm sm:text-base text-gray-600">Loading footer data...</p>
@@ -135,35 +135,44 @@ const AdminFooter = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-50">
+    <div className="min-h-screen ">
       {/* Header */}
-      <div className="bg-white shadow-sm border-b border-gray-200">
+      <div className=" ">
         <div className="max-w-7xl mx-auto px-3 sm:px-4 lg:px-6 py-4 sm:py-6">
           <div className="flex items-center justify-between gap-3 sm:gap-4">
             <div className="flex items-center gap-3 sm:gap-4">
-              <div className="w-8 h-8 sm:w-10 sm:h-10 bg-gradient-to-r from-green-500 to-emerald-500 rounded-lg flex items-center justify-center">
-                <FaBuilding className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
+              <div className="w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-r from-gray-700 via-gray-800 to-black rounded-xl flex items-center justify-center shadow-lg">
+                <FaBuilding className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
               </div>
               <div>
-                <h1 className="text-lg sm:text-xl lg:text-2xl font-bold text-gray-900">Footer Management</h1>
-                <p className="text-xs sm:text-sm text-gray-600">Manage company details and footer information</p>
+                <h1 className="text-base sm:text-lg lg:text-xl font-bold bg-gradient-to-r from-gray-700 via-gray-800 to-black bg-clip-text text-transparent">
+                  Footer Management
+                </h1>
+                <p className="text-xs text-gray-600 font-medium">Manage company details and footer information</p>
               </div>
             </div>
             
             <button
               onClick={handleSave}
               disabled={!hasChanges || saving}
-              className="inline-flex items-center justify-center gap-1.5 sm:gap-2 rounded-lg bg-gradient-to-r from-green-500 to-emerald-600 text-white px-4 py-2 text-sm font-medium hover:from-green-600 hover:to-emerald-700 disabled:opacity-60 disabled:cursor-not-allowed transition-all duration-200 shadow-sm hover:shadow-md"
+              className="inline-flex items-center justify-between gap-1 sm:gap-2 px-2 sm:px-4 py-1.5 sm:py-2.5 text-xs sm:text-sm font-semibold text-white bg-gradient-to-r from-gray-700 via-gray-800 to-black hover:from-gray-800 hover:via-gray-900 hover:to-gray-800 rounded-md sm:rounded-xl transition-all duration-200 hover:scale-105 shadow-lg hover:shadow-xl focus:outline-none focus:ring-2 focus:ring-gray-500/20 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
             >
               {saving ? (
                 <>
                   <FaSpinner className="w-3 h-3 sm:w-4 sm:h-4 animate-spin" />
-                  Saving...
+                  <span className="sm:hidden">Saving...</span>
+                  <span className="hidden sm:inline">Saving...</span>
                 </>
               ) : (
                 <>
                   <FaSave className="w-3 h-3 sm:w-4 sm:h-4" />
-                  Save Changes
+                  <span className="sm:hidden">Save</span>
+                  <span className="hidden sm:inline">Save Changes</span>
+                  <div className="w-3 h-3 sm:w-4 sm:h-4 bg-white rounded-full flex items-center justify-center">
+                    <svg className="w-1.5 h-1.5 sm:w-2 sm:h-2 text-black" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                    </svg>
+                  </div>
                 </>
               )}
             </button>
@@ -563,4 +572,11 @@ const AdminFooter = () => {
 };
 
 export default AdminFooter;
+
+
+
+
+
+
+
 

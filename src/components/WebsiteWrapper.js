@@ -11,11 +11,12 @@ const WebsiteWrapper = ({ children }) => {
   const isSuperAdmin = user?.role === 'superadmin';
 
   const isAuthRoute = location?.pathname === '/login' || location?.pathname === '/register';
+  const isSuperAdminRoute = location?.pathname?.startsWith('/superadmin');
 
-  // Show loading state while fetching config
-  if (loading) {
+  // Show loading state while fetching config (but not for super admin routes)
+  if (loading && !isSuperAdminRoute) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+      <div className="min-h-screen bg-white flex items-center justify-center">
         <div className="text-center">
           <div className="w-8 h-8 border-4 border-blue-600 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
           <p className="text-gray-600">Loading...</p>

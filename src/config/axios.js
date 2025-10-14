@@ -2,10 +2,8 @@ import axios from 'axios';
 
 // Create axios instance with default config
 const axiosInstance = axios.create({
-  // Use explicit base URL for development and production
-  baseURL: process.env.NODE_ENV === 'production' 
-    ? process.env.REACT_APP_API_URL 
-    : 'http://localhost:5000', // Explicit backend URL in development
+  // Use environment variable for API URL
+  baseURL: process.env.REACT_APP_API_URL || 'http://localhost:5000',
   timeout: 15000, // 15 second timeout
   withCredentials: true,
   headers: {

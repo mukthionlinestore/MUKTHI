@@ -11,6 +11,11 @@ import { WishlistProvider } from './context/WishlistContext';
 import { SettingsProvider } from './context/SettingsContext';
 import { FooterProvider } from './context/FooterContext';
 import { WebsiteConfigProvider } from './context/WebsiteConfigContext';
+import { HomePageSettingsProvider } from './context/HomePageSettingsContext';
+import { NotificationProvider } from './context/NotificationContext';
+
+// Theme Provider
+import ThemeProvider from './components/ThemeProvider';
 
 // Components
 import Navbar from './components/layout/Navbar';
@@ -25,10 +30,16 @@ import Products from './pages/Products';
 import About from './pages/About';
 import Login from './pages/Login';
 import Register from './pages/Register';
+import ForgotPassword from './pages/ForgotPassword';
+import ResetPassword from './pages/ResetPassword';
+import ResetPasswordOTP from './pages/ResetPasswordOTP';
+import VerifyEmail from './pages/VerifyEmail';
+import VerifySignupOTP from './pages/VerifySignupOTP';
 import Dashboard from './pages/Dashboard';
 import ProductDetail from './pages/ProductDetail';
 import Cart from './pages/Cart';
 import Wishlist from './pages/Wishlist';
+import Notifications from './pages/Notifications';
 import Checkout from './pages/Checkout';
 import Payment from './pages/Payment';
 import Orders from './pages/Orders';
@@ -45,6 +56,7 @@ import AdminOrders from './pages/admin/AdminOrders';
 import AdminUsers from './pages/admin/AdminUsers';
 import AdminSettings from './pages/admin/AdminSettings';
 import AdminFooter from './pages/admin/AdminFooter';
+import AdminNotifications from './pages/admin/AdminNotifications';
 import ManageCategories from './pages/admin/ManageCategories';
 import ManageBrands from './pages/admin/ManageBrands';
 
@@ -55,21 +67,40 @@ function App() {
   return (
     <AuthProvider>
       <WebsiteConfigProvider>
-        <SettingsProvider>
-          <FooterProvider>
-            <CartProvider>
-              <WishlistProvider>
-                <Router>
-                  <WebsiteWrapper>
-                    <div className="min-h-screen bg-gray-50">
-                      <Navbar />
-                      <main>
+        <HomePageSettingsProvider>
+          <ThemeProvider>
+            <SettingsProvider>
+              <FooterProvider>
+                <CartProvider>
+                  <WishlistProvider>
+                    <NotificationProvider>
+                  <Router>
+                    <WebsiteWrapper>
+                      <div className="min-h-screen bg-gray-50 relative">
+                      {/* Single Gradient Overlay for Entire Application */}
+                      <div className="absolute inset-0 bg-gradient-to-br from-blue-600/20 via-transparent to-purple-600/20 pointer-events-none"></div>
+                      
+                      {/* Animated Background Elements */}
+                      <div className="absolute inset-0">
+                        <div className="absolute top-10 left-10 w-24 h-24 bg-blue-500/10 rounded-full animate-pulse"></div>
+                        <div className="absolute top-20 right-20 w-16 h-16 bg-purple-500/10 rounded-full animate-pulse animation-delay-1000"></div>
+                        <div className="absolute bottom-10 left-1/4 w-20 h-20 bg-pink-500/10 rounded-full animate-pulse animation-delay-2000"></div>
+                        <div className="absolute bottom-20 right-1/3 w-12 h-12 bg-green-500/10 rounded-full animate-pulse animation-delay-3000"></div>
+                      </div>
+                      <div className="relative z-10">
+                        <Navbar />
+                        <main>
                         <Routes>
                           <Route path="/" element={<Home />} />
                           <Route path="/products" element={<Products />} />
                           <Route path="/about" element={<About />} />
                           <Route path="/login" element={<Login />} />
                           <Route path="/register" element={<Register />} />
+                          <Route path="/forgot-password" element={<ForgotPassword />} />
+                          <Route path="/reset-password" element={<ResetPassword />} />
+                          <Route path="/reset-password-otp" element={<ResetPasswordOTP />} />
+                          <Route path="/verify-email" element={<VerifyEmail />} />
+                          <Route path="/verify-signup-otp" element={<VerifySignupOTP />} />
                           <Route path="/product/:id" element={<ProductDetail />} />
                           <Route path="/auth/google/callback" element={<GoogleCallback />} />
 
@@ -87,6 +118,11 @@ function App() {
                           <Route path="/wishlist" element={
                             <ProtectedRoute>
                               <Wishlist />
+                            </ProtectedRoute>
+                          } />
+                          <Route path="/notifications" element={
+                            <ProtectedRoute>
+                              <Notifications />
                             </ProtectedRoute>
                           } />
                           <Route path="/checkout" element={
@@ -129,6 +165,7 @@ function App() {
                             <Route path="users" element={<AdminUsers />} />
                             <Route path="settings" element={<AdminSettings />} />
                             <Route path="footer" element={<AdminFooter />} />
+                            <Route path="notifications" element={<AdminNotifications />} />
                             <Route path="categories" element={<ManageCategories />} />
                             <Route path="brands" element={<ManageBrands />} />
                           </Route>
@@ -136,26 +173,40 @@ function App() {
                           {/* Super Admin Routes */}
                           <Route path="/superadmin/dashboard" element={<SuperAdminDashboard />} />
                         </Routes>
-                      </main>
+                        </main>
+                      </div>
                       <ToastContainer
                         position="top-right"
-                        autoClose={5000}
+                        autoClose={3000}
                         hideProgressBar={false}
-                        newestOnTop={false}
-                        closeOnClick
+                        newestOnTop={true}
+                        closeOnClick={true}
                         rtl={false}
-                        pauseOnFocusLoss
-                        draggable
-                        pauseOnHover
+                        pauseOnFocusLoss={false}
+                        draggable={false}
+                        pauseOnHover={false}
                         theme="light"
+                        limit={3}
+                        enableMultiContainer={false}
+                        toastClassName="custom-toast"
+                        bodyClassName="custom-toast-body"
+                        progressClassName="custom-toast-progress"
+                        style={{
+                          top: '80px',
+                          right: '16px',
+                          zIndex: 9999
+                        }}
                       />
                     </div>
                   </WebsiteWrapper>
                 </Router>
-              </WishlistProvider>
-            </CartProvider>
-          </FooterProvider>
-        </SettingsProvider>
+                    </NotificationProvider>
+                  </WishlistProvider>
+                </CartProvider>
+              </FooterProvider>
+            </SettingsProvider>
+          </ThemeProvider>
+        </HomePageSettingsProvider>
       </WebsiteConfigProvider>
     </AuthProvider>
   );

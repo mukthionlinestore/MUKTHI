@@ -131,3 +131,11 @@ footerSchema.statics.getInstance = async function() {
 
 module.exports = mongoose.model('Footer', footerSchema);
 
+
+
+
+
+
+
+
+

@@ -15,47 +15,227 @@ const websiteConfigSchema = new mongoose.Schema({
     type: String,
     default: ''
   },
+  logoAlt: {
+    type: String,
+    default: 'Website Logo'
+  },
   websiteFavicon: {
     type: String,
     default: ''
   },
   
-  // Theme Configuration
+  // Main Brand Colors (MUKHTI Burgundy + White Combination)
   primaryColor: {
     type: String,
-    default: '#10B981' // emerald-500
+    default: '#5D1A1D' // Deep burgundy/maroon from MUKHTI logo
   },
   secondaryColor: {
     type: String,
-    default: '#059669' // emerald-600
+    default: '#D4AF37' // Elegant gold from lotus
   },
   accentColor: {
     type: String,
-    default: '#0D9488' // teal-600
-  },
-  backgroundColor: {
-    type: String,
-    default: '#F0FDF4' // emerald-50
+    default: '#FFFFFF' // Pure white accent
   },
   
-  // Header Configuration
+  // Layout Colors (Burgundy + White combination)
   headerBackground: {
     type: String,
-    default: '#FFFFFF'
+    default: '#5D1A1D' // Rich burgundy header like your logo
   },
   headerTextColor: {
     type: String,
-    default: '#1F2937'
+    default: '#D4AF37' // Gold text on burgundy
   },
-  
-  // Footer Configuration
   footerBackground: {
     type: String,
-    default: '#1F2937'
+    default: '#5D1A1D' // Matching burgundy footer
   },
   footerTextColor: {
     type: String,
-    default: '#F9FAFB'
+    default: '#FFFFFF' // White text in footer
+  },
+  backgroundColor: {
+    type: String,
+    default: '#FFFFFF' // Pure white background for contrast
+  },
+  
+  // Navigation Colors
+  navLinkColor: {
+    type: String,
+    default: '#D4AF37' // Gold nav links on burgundy header
+  },
+  navLinkHoverColor: {
+    type: String,
+    default: '#FFFFFF' // White on hover
+  },
+  navActiveColor: {
+    type: String,
+    default: '#FFFFFF' // White for active
+  },
+  
+  // UI Element Colors
+  buttonPrimaryColor: {
+    type: String,
+    default: '#5D1A1D' // Burgundy primary buttons
+  },
+  buttonPrimaryHoverColor: {
+    type: String,
+    default: '#7A2428' // Lighter burgundy on hover
+  },
+  buttonSecondaryColor: {
+    type: String,
+    default: '#D4AF37' // Gold secondary buttons
+  },
+  buttonSecondaryHoverColor: {
+    type: String,
+    default: '#B8941F' // Darker gold on hover
+  },
+  buttonDangerColor: {
+    type: String,
+    default: '#B91C1C' // Red for danger
+  },
+  buttonSuccessColor: {
+    type: String,
+    default: '#059669' // Green for success
+  },
+  
+  // Text Colors (Optimized for white background)
+  textPrimaryColor: {
+    type: String,
+    default: '#1F2937' // Dark gray for primary text
+  },
+  textSecondaryColor: {
+    type: String,
+    default: '#6B7280' // Medium gray for secondary text
+  },
+  textMutedColor: {
+    type: String,
+    default: '#9CA3AF' // Light gray for muted text
+  },
+  linkColor: {
+    type: String,
+    default: '#5D1A1D' // Burgundy links
+  },
+  linkHoverColor: {
+    type: String,
+    default: '#D4AF37' // Gold on hover
+  },
+  
+  // Border & Surface Colors (Clean white design)
+  borderColor: {
+    type: String,
+    default: '#E5E7EB' // Light gray borders
+  },
+  cardBackground: {
+    type: String,
+    default: '#FFFFFF' // Pure white cards
+  },
+  cardBorderColor: {
+    type: String,
+    default: '#F3F4F6' // Very light gray card borders
+  },
+  inputBackground: {
+    type: String,
+    default: '#FFFFFF' // White inputs
+  },
+  inputBorderColor: {
+    type: String,
+    default: '#D1D5DB' // Light gray input borders
+  },
+  inputFocusBorderColor: {
+    type: String,
+    default: '#5D1A1D' // Burgundy focus
+  },
+  
+  // Product Colors
+  productCardBackground: {
+    type: String,
+    default: '#FFFFFF'
+  },
+  productCardBorderColor: {
+    type: String,
+    default: '#F3F4F6'
+  },
+  productPriceColor: {
+    type: String,
+    default: '#5D1A1D'
+  },
+  productSalePriceColor: {
+    type: String,
+    default: '#DC2626'
+  },
+  productBadgeColor: {
+    type: String,
+    default: '#D4AF37'
+  },
+  
+  // Status Colors
+  successColor: {
+    type: String,
+    default: '#10B981'
+  },
+  warningColor: {
+    type: String,
+    default: '#F59E0B'
+  },
+  errorColor: {
+    type: String,
+    default: '#EF4444'
+  },
+  infoColor: {
+    type: String,
+    default: '#3B82F6'
+  },
+  
+  // Form Colors
+  formLabelColor: {
+    type: String,
+    default: '#374151'
+  },
+  formPlaceholderColor: {
+    type: String,
+    default: '#9CA3AF'
+  },
+  formErrorColor: {
+    type: String,
+    default: '#EF4444'
+  },
+  formSuccessColor: {
+    type: String,
+    default: '#10B981'
+  },
+  
+  // Modal & Overlay Colors
+  modalBackgroundColor: {
+    type: String,
+    default: '#FFFFFF'
+  },
+  modalBorderColor: {
+    type: String,
+    default: '#E5E7EB'
+  },
+  overlayColor: {
+    type: String,
+    default: 'rgba(0, 0, 0, 0.5)'
+  },
+  
+  // Advanced Colors
+  hoverColor: {
+    type: String,
+    default: '#7A2428' // Lighter burgundy for hovers
+  },
+  shadowColor: {
+    type: String,
+    default: 'rgba(0, 0, 0, 0.1)' // Subtle black shadow
+  },
+  gradientStart: {
+    type: String,
+    default: '#5D1A1D' // Burgundy gradient start
+  },
+  gradientEnd: {
+    type: String,
+    default: '#D4AF37' // Gold gradient end
   },
   
   // Contact Information
@@ -198,6 +378,32 @@ const websiteConfigSchema = new mongoose.Schema({
   
   // Payment Configuration
   paymentSettings: {
+    paymentMethod: {
+      type: String,
+      enum: ['gateway', 'whatsapp', 'instagram'],
+      default: 'gateway'
+    },
+    whatsappNumber: {
+      type: String,
+      default: ''
+    },
+    instagramUsername: {
+      type: String,
+      default: ''
+    },
+    paymentGatewayEnabled: {
+      type: Boolean,
+      default: true
+    },
+    whatsappEnabled: {
+      type: Boolean,
+      default: false
+    },
+    instagramEnabled: {
+      type: Boolean,
+      default: false
+    },
+    // Legacy payment settings for backward compatibility
     stripeEnabled: {
       type: Boolean,
       default: true
@@ -246,4 +452,5 @@ websiteConfigSchema.statics.getInstance = async function() {
 };
 
 module.exports = mongoose.model('WebsiteConfig', websiteConfigSchema);
+
 

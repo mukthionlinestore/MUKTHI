@@ -7,8 +7,8 @@ import {
   FaFilter, 
   FaTimes,
   FaSpinner,
-  FaArrowLeft,
-  FaEye
+  FaEye,
+  FaSort
 } from 'react-icons/fa';
 import ProductCard from '../components/products/ProductCard';
 import FilterSidebar from '../components/products/FilterSidebar';
@@ -25,7 +25,22 @@ const Products = () => {
   const [categories, setCategories] = useState([]);
   const [brands, setBrands] = useState([]);
   const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);
+  const [sortDropdownOpen, setSortDropdownOpen] = useState(false);
   const [searchLoading, setSearchLoading] = useState(false);
+
+  // Close sort dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (sortDropdownOpen && !event.target.closest('.sort-dropdown-container')) {
+        setSortDropdownOpen(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [sortDropdownOpen]);
 
   // Debounced search to avoid too many API calls
   const debouncedSearch = useCallback(
@@ -135,61 +150,78 @@ const Products = () => {
   }, [products]);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-emerald-50 to-teal-50">
-      {/* Header Section */}
-      <div className="bg-white shadow-sm border-b border-gray-200">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-6">
-          <div className="flex items-center gap-3 sm:gap-4">
-            <Link
-              to="/"
-              className="inline-flex items-center justify-center h-8 w-8 sm:h-10 sm:w-10 rounded-lg bg-gray-100 hover:bg-gray-200 transition-colors"
-            >
-              <FaArrowLeft className="w-3 h-3 sm:w-4 sm:h-4 text-gray-600" />
-            </Link>
-            <div>
-              <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-900">All Products</h1>
-              <p className="text-xs sm:text-sm text-gray-600 mt-1">Discover our complete collection</p>
-            </div>
-          </div>
-        </div>
-      </div>
+    <div className="min-h-screen relative">
 
       {/* Search and Filters Section */}
-      <section className="bg-white border-b border-gray-200">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-6">
-          <div className="flex flex-col gap-3 sm:gap-4 lg:flex-row lg:items-center lg:justify-between">
-            {/* Search */}
-            <div className="relative flex-1 max-w-md">
+      <section className="relative z-20" style={{overflow: 'visible'}}>
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 sm:py-4">
+          <div className="flex items-center gap-2 sm:gap-3">
+            {/* Search Bar with Icon - Made Longer */}
+            <div className="relative flex-1 max-w-4xl">
               <FaSearch className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 w-3 h-3 sm:w-4 sm:h-4 text-gray-400" />
               <input
                 type="text"
                 placeholder="Search products..."
                 onChange={handleSearchInput}
-                className="w-full rounded-lg sm:rounded-xl border border-gray-300 bg-white py-2 sm:py-2.5 pl-9 sm:pl-10 pr-4 text-xs sm:text-sm text-gray-900 placeholder-gray-500 shadow-sm outline-none transition focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20"
+                className="w-full rounded-lg sm:rounded-xl border border-gray-200 py-2 sm:py-2.5 pl-9 sm:pl-10 pr-10 sm:pr-12 text-xs sm:text-sm shadow-sm outline-none transition bg-white hover:border-blue-500 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20"
               />
+              {/* Search Icon at End */}
+              <div className="absolute right-3 top-1/2 -translate-y-1/2">
+                <FaSearch className="w-3 h-3 sm:w-4 sm:h-4 text-gray-400" />
+              </div>
             </div>
 
-            {/* Desktop Filters */}
-            <div className="hidden lg:flex lg:items-center lg:gap-3">
-              <SortDropdown sortBy={sortBy} onSortChange={handleSortChange} />
+            {/* Sort Icon Button */}
+            <div className="flex-shrink-0 relative sort-dropdown-container z-30" style={{overflow: 'visible'}}>
               <button
-                onClick={() => setMobileFiltersOpen(true)}
-                className="inline-flex items-center gap-1.5 sm:gap-2 rounded-lg sm:rounded-xl border border-gray-300 bg-white px-3 sm:px-4 py-2 sm:py-2.5 text-xs sm:text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 transition-colors"
+                onClick={() => setSortDropdownOpen(!sortDropdownOpen)}
+                className="inline-flex items-center gap-1.5 sm:gap-2 rounded-lg sm:rounded-xl border border-gray-200 px-3 sm:px-4 py-2 sm:py-2.5 text-xs sm:text-sm font-medium shadow-sm hover:shadow-md transition-all duration-200 bg-white hover:bg-gray-50 hover:border-blue-500 text-gray-700 hover:text-blue-600"
               >
-                <FaFilter className="w-3 h-3 sm:w-4 sm:h-4" />
-                Filters
+                <FaSort className="w-3 h-3 sm:w-4 sm:h-4" />
+                <span className="hidden sm:inline">Sort</span>
               </button>
+
+              {/* Sort Dropdown Menu */}
+              {sortDropdownOpen && (
+                <div 
+                  className="absolute right-0 top-full mt-2 bg-white rounded-lg shadow-xl border border-gray-200 z-[9999] w-56"
+                >
+                  <div className="py-1">
+                    {[
+                      { value: 'newest', label: 'Newest First' },
+                      { value: 'oldest', label: 'Oldest First' },
+                      { value: 'price_asc', label: 'Price: Low to High' },
+                      { value: 'price_desc', label: 'Price: High to Low' },
+                      { value: 'rating', label: 'Highest Rated' },
+                      { value: 'name_asc', label: 'Name: A to Z' },
+                      { value: 'name_desc', label: 'Name: Z to A' },
+                    ].map((option) => (
+                      <button
+                        key={option.value}
+                        onClick={() => {
+                          handleSortChange(option.value);
+                          setSortDropdownOpen(false);
+                        }}
+                        className={`w-full text-left px-4 py-2 text-sm hover:bg-gray-50 transition-colors ${
+                          sortBy === option.value ? 'bg-blue-50 text-blue-700' : 'text-gray-700'
+                        }`}
+                      >
+                        {option.label}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
             </div>
 
-            {/* Mobile Filters Button */}
-            <div className="lg:hidden flex items-center gap-2">
-              <SortDropdown sortBy={sortBy} onSortChange={handleSortChange} />
+            {/* Filter Button - Mobile Only */}
+            <div className="flex-shrink-0 lg:hidden">
               <button
                 onClick={() => setMobileFiltersOpen(true)}
-                className="inline-flex items-center gap-1.5 sm:gap-2 rounded-lg sm:rounded-xl border border-gray-300 bg-white px-3 sm:px-4 py-2 sm:py-2.5 text-xs sm:text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 transition-colors"
+                className="inline-flex items-center gap-1.5 sm:gap-2 rounded-lg sm:rounded-xl border border-gray-200 px-3 sm:px-4 py-2 sm:py-2.5 text-xs sm:text-sm font-medium shadow-sm hover:shadow-md transition-all duration-200 bg-white hover:bg-gray-50 hover:border-blue-500 text-gray-700 hover:text-blue-600"
               >
                 <FaFilter className="w-3 h-3 sm:w-4 sm:h-4" />
-                Filters
+                <span className="hidden sm:inline">Filters</span>
               </button>
             </div>
           </div>
@@ -214,7 +246,7 @@ const Products = () => {
               )}
               <button
                 onClick={clearAll}
-                className="text-xs sm:text-sm text-gray-600 hover:text-emerald-600 transition-colors"
+                className="text-xs sm:text-sm text-gray-600 hover:text-blue-600 transition-colors"
               >
                 Clear all
               </button>
@@ -224,18 +256,32 @@ const Products = () => {
       </section>
 
       {/* Products Section */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
+      <section className="py-6 sm:py-8 relative overflow-hidden z-10">
+        {/* Animated Background Elements */}
+        <div className="absolute inset-0">
+          <div className="absolute top-10 left-10 w-24 h-24 bg-blue-500/10 rounded-full animate-pulse"></div>
+          <div className="absolute top-20 right-20 w-16 h-16 bg-purple-500/10 rounded-full animate-pulse animation-delay-1000"></div>
+          <div className="absolute bottom-10 left-1/4 w-20 h-20 bg-pink-500/10 rounded-full animate-pulse animation-delay-2000"></div>
+          <div className="absolute bottom-20 right-1/3 w-12 h-12 bg-green-500/10 rounded-full animate-pulse animation-delay-3000"></div>
+        </div>
+        
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         <div className="flex gap-4 sm:gap-6 lg:gap-8">
-          {/* Desktop Sidebar */}
-          <div className="hidden lg:block w-64 flex-shrink-0">
-            <FilterSidebar
-              categories={categories}
-              brands={brands}
-              selectedCategory={selectedCategory}
-              selectedBrand={selectedBrand}
-              onCategoryChange={handleCategoryChange}
-              onBrandChange={handleBrandChange}
-            />
+          {/* Desktop Sidebar - Always Visible on Desktop */}
+          <div className="hidden lg:block w-72 flex-shrink-0">
+            <div className="sticky top-4">
+              <div className="bg-white rounded-xl p-4 sm:p-5 shadow-sm hover:shadow-md transition-all duration-500 border border-gray-200 hover:bg-gray-50">
+                <h3 className="text-lg font-semibold mb-4 text-gray-900">Filters</h3>
+                <FilterSidebar
+                  categories={categories}
+                  brands={brands}
+                  selectedCategory={selectedCategory}
+                  selectedBrand={selectedBrand}
+                  onCategoryChange={handleCategoryChange}
+                  onBrandChange={handleBrandChange}
+                />
+              </div>
+            </div>
           </div>
 
           {/* Products Grid */}
@@ -247,7 +293,7 @@ const Products = () => {
             ) : filteredProducts.length === 0 ? (
               <EmptyState onReset={clearAll} searchTerm={searchTerm} />
             ) : (
-              <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-4 lg:gap-6">
+              <div className="grid grid-cols-2 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-4 md:gap-5 lg:gap-6">
                 {filteredProducts.map((product) => (
                   <ProductCard key={product._id} product={product} />
                 ))}
@@ -255,14 +301,15 @@ const Products = () => {
             )}
           </div>
         </div>
+        </div>
       </section>
 
       {/* Mobile Filters Drawer */}
       {mobileFiltersOpen && (
         <div className="lg:hidden fixed inset-0 z-50">
           <div className="absolute inset-0 bg-gray-900/50" onClick={() => setMobileFiltersOpen(false)} />
-          <div className="absolute inset-y-0 right-0 w-full max-w-sm bg-white shadow-xl animate-in slide-in-from-right">
-            <div className="flex items-center justify-between border-b border-gray-200 p-3 sm:p-4">
+          <div className="absolute inset-y-0 right-0 w-full max-w-sm bg-white shadow-xl animate-in slide-in-from-right flex flex-col">
+            <div className="flex items-center justify-between border-b border-gray-200 p-3 sm:p-4 flex-shrink-0">
               <h3 className="text-sm sm:text-base font-semibold text-gray-900">Filters</h3>
               <button
                 className="inline-flex h-6 w-6 sm:h-8 sm:w-8 items-center justify-center rounded-full hover:bg-gray-100 transition-colors"
@@ -272,7 +319,7 @@ const Products = () => {
                 <FaTimes className="w-3 h-3 sm:w-4 sm:h-4" />
               </button>
             </div>
-            <div className="p-3 sm:p-4">
+            <div className="flex-1 overflow-y-auto p-3 sm:p-4">
               <FilterSidebar
                 categories={categories}
                 brands={brands}
@@ -282,11 +329,12 @@ const Products = () => {
                 onBrandChange={handleBrandChange}
               />
             </div>
-            <div className="sticky bottom-0 border-t border-gray-200 bg-white p-3 sm:p-4 flex items-center justify-end gap-2">
-              <button onClick={clearAll} className="text-xs sm:text-sm text-gray-600 hover:text-emerald-600 transition-colors mr-auto">Reset</button>
+            <div className="sticky bottom-0 border-t border-gray-200 bg-white p-3 sm:p-4 flex items-center justify-end gap-2 flex-shrink-0">
+              <button onClick={clearAll} className="text-xs sm:text-sm text-gray-600 hover:text-blue-600 transition-colors mr-auto">Reset</button>
               <button
                 onClick={() => setMobileFiltersOpen(false)}
-                className="rounded-lg sm:rounded-xl bg-emerald-600 px-3 sm:px-4 py-2 text-xs sm:text-sm font-medium text-white hover:bg-emerald-700 transition-colors"
+                className="rounded-lg sm:rounded-xl px-3 sm:px-4 py-2 text-xs sm:text-sm font-medium text-white transition-colors"
+                style={{background: 'var(--blue-gradient)'}}
               >
                 Apply
               </button>
@@ -315,10 +363,10 @@ const Chip = ({ children, onClear }) => (
 const SkeletonGrid = () => {
   const items = Array.from({ length: 8 });
   return (
-    <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-4 lg:gap-6">
+    <div className="grid grid-cols-2 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-4 md:gap-5 lg:gap-6">
       {items.map((_, idx) => (
-        <div key={idx} className="rounded-xl sm:rounded-2xl border border-gray-200 bg-white p-3 sm:p-4 shadow-sm">
-          <div className="aspect-square w-full rounded-lg sm:rounded-xl bg-gray-100 animate-pulse" />
+        <div key={idx} className="rounded-3xl border border-gray-200 bg-white p-3 sm:p-4 shadow-sm">
+          <div className="aspect-square w-full rounded-3xl bg-gray-100 animate-pulse" />
           <div className="mt-3 h-3 sm:h-4 w-3/4 rounded bg-gray-100 animate-pulse" />
           <div className="mt-2 h-3 sm:h-4 w-1/2 rounded bg-gray-100 animate-pulse" />
           <div className="mt-3 h-8 sm:h-9 w-full rounded-lg bg-gray-100 animate-pulse" />
@@ -358,13 +406,14 @@ const EmptyState = ({ onReset, searchTerm }) => (
     <div className="mt-4 sm:mt-6 flex items-center justify-center gap-2">
       <button 
         onClick={onReset} 
-        className="rounded-lg sm:rounded-xl bg-emerald-600 px-3 sm:px-4 py-2 text-xs sm:text-sm font-medium text-white hover:bg-emerald-700 transition-colors"
+        className="rounded-lg sm:rounded-xl px-3 sm:px-4 py-2 text-xs sm:text-sm font-medium text-white transition-colors"
+        style={{background: 'var(--blue-gradient)'}}
       >
         Clear all
       </button>
       <Link 
         to="/" 
-        className="text-xs sm:text-sm text-gray-700 underline underline-offset-2 hover:text-emerald-600 transition-colors"
+        className="text-xs sm:text-sm text-gray-700 underline underline-offset-2 hover:text-blue-600 transition-colors"
       >
         Go to home
       </Link>

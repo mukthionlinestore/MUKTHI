@@ -59,6 +59,11 @@ export const WishlistProvider = ({ children }) => {
   const [state, dispatch] = useReducer(wishlistReducer, initialState);
   const { isAuthenticated } = useAuth();
 
+  // Mobile detection function
+  const isMobile = () => {
+    return /Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || window.innerWidth <= 768;
+  };
+
   // Load wishlist on authentication
   useEffect(() => {
     if (isAuthenticated) {
@@ -104,7 +109,7 @@ export const WishlistProvider = ({ children }) => {
         payload: res.data
       });
 
-      toast.success('Item added to wishlist successfully!');
+      // Toast will be shown by the calling component (ProductCard)
       return { success: true };
     } catch (error) {
       const message = error.response?.data?.message || 'Failed to add item to wishlist';
@@ -130,7 +135,7 @@ export const WishlistProvider = ({ children }) => {
         payload: res.data
       });
 
-      toast.success('Item removed from wishlist');
+      // Toast will be shown by the calling component (ProductCard)
       return { success: true };
     } catch (error) {
       const message = error.response?.data?.message || 'Failed to remove item from wishlist';
@@ -152,7 +157,7 @@ export const WishlistProvider = ({ children }) => {
       await axios.delete('/api/wishlist/clear');
       
       dispatch({ type: 'CLEAR_WISHLIST' });
-      toast.success('Wishlist cleared successfully');
+      // Toast will be shown by the calling component
       return { success: true };
     } catch (error) {
       const message = error.response?.data?.message || 'Failed to clear wishlist';

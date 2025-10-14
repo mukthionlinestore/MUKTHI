@@ -13,90 +13,16 @@ const GoogleSignIn = ({ onSuccess, onError }) => {
       setIsLoading(true);
       console.log('🚀 Starting Google OAuth...');
 
-      // Open Google OAuth in a popup window
-      const width = 500;
-      const height = 600;
-      const left = window.screenX + (window.outerWidth - width) / 2;
-      const top = window.screenY + (window.outerHeight - height) / 2;
-
-      const popup = window.open(
-        'http://localhost:5000/api/auth/google?prompt=select_account',
-        'google-oauth',
-        `width=${width},height=${height},left=${left},top=${top},scrollbars=yes,resizable=yes`
-      );
-
-      if (!popup) {
-        toast.error('Popup blocked! Please allow popups for this site.');
-        return;
-      }
-
-      // Wait for the popup to close and handle the result
-      const result = await new Promise((resolve, reject) => {
-        const checkClosed = setInterval(() => {
-          if (popup.closed) {
-            clearInterval(checkClosed);
-            
-            // Add a small delay to ensure localStorage is updated
-            setTimeout(() => {
-              // Check if we have a token in localStorage
-              const token = localStorage.getItem('google_token');
-              const error = localStorage.getItem('google_oauth_error');
-              
-              if (error) {
-                localStorage.removeItem('google_oauth_error');
-                reject(new Error(error));
-              } else if (token) {
-                localStorage.removeItem('google_token');
-                console.log('🔐 Token found in localStorage after popup closed');
-                resolve({ success: true, token });
-              } else {
-                console.log('❌ No token found in localStorage after popup closed');
-                reject(new Error('Authentication was cancelled or failed'));
-              }
-            }, 100);
-          }
-        }, 100);
-
-        // Timeout after 5 minutes
-        setTimeout(() => {
-          clearInterval(checkClosed);
-          if (!popup.closed) {
-            popup.close();
-          }
-          reject(new Error('Authentication timeout'));
-        }, 300000);
-      });
-
-      if (result.success) {
-        console.log('🔐 Google OAuth successful, authenticating...');
-        
-        // Authenticate with the token
-        const authResult = await loginWithGoogle(result.token);
-        
-        if (authResult.success) {
-          console.log('✅ Authentication successful!');
-          toast.success('Successfully signed in with Google!');
-          if (onSuccess) onSuccess();
-        } else {
-          console.log('❌ Authentication failed:', authResult.error);
-          toast.error(authResult.error || 'Authentication failed');
-          if (onError) onError();
-        }
-      }
+      const baseURL = process.env.REACT_APP_API_URL || 'http://localhost:5000';
+      
+      // Simple redirect approach - works reliably on all devices
+      console.log('🔄 Redirecting to Google OAuth...');
+      window.location.href = `${baseURL}/api/auth/google`;
 
     } catch (error) {
       console.error('❌ Google sign-in error:', error);
-      
-      if (error.message.includes('cancelled')) {
-        toast.info('Google sign-in was cancelled');
-      } else if (error.message.includes('timeout')) {
-        toast.error('Sign-in timed out. Please try again.');
-      } else {
-        toast.error('Google sign-in failed. Please try again.');
-      }
-      
+      toast.error('Google sign-in failed. Please try again.');
       if (onError) onError();
-    } finally {
       setIsLoading(false);
     }
   };
@@ -105,12 +31,12 @@ const GoogleSignIn = ({ onSuccess, onError }) => {
     <button
       onClick={handleGoogleSignIn}
       disabled={isLoading}
-      className="w-full flex items-center justify-center gap-3 px-4 py-3 border border-gray-300 rounded-lg bg-white text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+      className="w-full flex items-center justify-center gap-3 sm:gap-4 px-4 sm:px-6 py-3.5 sm:py-4 border-2 border-gray-200 rounded-xl sm:rounded-2xl bg-white text-gray-700 hover:bg-gray-50 hover:border-gray-300 focus:outline-none focus:ring-4 focus:ring-blue-500/20 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed text-sm sm:text-base font-semibold shadow-sm hover:shadow-md"
     >
       {isLoading ? (
-        <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-blue-600"></div>
+        <div className="animate-spin rounded-full h-5 w-5 sm:h-6 sm:w-6 border-2 border-gray-300 border-t-blue-600"></div>
       ) : (
-        <svg className="w-5 h-5" viewBox="0 0 24 24">
+        <svg className="w-5 h-5 sm:w-6 sm:h-6 flex-shrink-0" viewBox="0 0 24 24">
           <path
             fill="#4285F4"
             d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
@@ -129,7 +55,9 @@ const GoogleSignIn = ({ onSuccess, onError }) => {
           />
         </svg>
       )}
-      {isLoading ? 'Signing in...' : 'Continue with Google'}
+      <span className="truncate">
+        {isLoading ? 'Signing in...' : 'Continue with Google'}
+      </span>
     </button>
   );
 };

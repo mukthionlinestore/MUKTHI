@@ -96,21 +96,70 @@ const getPublicIdFromUrl = (url) => {
 
 // Helper function to upload base64 image to Cloudinary
 const uploadBase64Image = async (base64String, folder = 'ecommerce-products') => {
+  console.log('☁️ ===== CLOUDINARY UPLOAD START =====');
+  console.log('⏰ Timestamp:', new Date().toISOString());
+  console.log('📁 Folder:', folder);
+  console.log('📊 Base64 string length:', base64String ? base64String.length : 'undefined');
+  console.log('🔍 Base64 starts with:', base64String ? base64String.substring(0, 50) + '...' : 'undefined');
+  
   try {
-    const result = await cloudinary.uploader.upload(base64String, {
+    console.log('🔧 Cloudinary configuration check:');
+    console.log('  - Cloud name:', process.env.CLOUDINARY_CLOUD_NAME ? 'Set' : 'Missing');
+    console.log('  - API key:', process.env.CLOUDINARY_API_KEY ? 'Set' : 'Missing');
+    console.log('  - API secret:', process.env.CLOUDINARY_API_SECRET ? 'Set' : 'Missing');
+    
+    console.log('📤 Uploading to Cloudinary...');
+    const uploadOptions = {
       folder: folder,
       transformation: [
         { width: 800, height: 800, crop: 'limit' },
         { quality: 'auto:good' }
       ]
-    });
+    };
+    console.log('📋 Upload options:', uploadOptions);
     
-    return {
+    const result = await cloudinary.uploader.upload(base64String, uploadOptions);
+    console.log('✅ Cloudinary upload successful!');
+    console.log('📊 Result details:');
+    console.log('  - URL:', result.secure_url);
+    console.log('  - Public ID:', result.public_id);
+    console.log('  - Format:', result.format);
+    console.log('  - Width:', result.width);
+    console.log('  - Height:', result.height);
+    console.log('  - Size:', result.bytes, 'bytes');
+    console.log('  - Result type:', typeof result);
+    console.log('  - Result keys:', Object.keys(result || {}));
+    
+    const returnData = {
       url: result.secure_url,
       publicId: result.public_id
     };
+    console.log('📤 Returning data:', returnData);
+    console.log('✅ ===== CLOUDINARY UPLOAD SUCCESS =====');
+    
+    return returnData;
   } catch (error) {
-    console.error('Error uploading base64 image to Cloudinary:', error);
+    console.error('❌ ===== CLOUDINARY UPLOAD ERROR =====');
+    console.error('⏰ Error timestamp:', new Date().toISOString());
+    console.error('🚨 Error type:', error.constructor.name);
+    console.error('📝 Error message:', error.message);
+    console.error('📚 Error stack:', error.stack);
+    console.error('🔍 Error details:', {
+      name: error.name,
+      code: error.code,
+      status: error.status,
+      statusCode: error.statusCode,
+      http_code: error.http_code,
+      request_id: error.request_id
+    });
+    
+    if (error.response) {
+      console.error('📡 Error response data:', error.response.data);
+      console.error('📡 Error response status:', error.response.status);
+      console.error('📡 Error response headers:', error.response.headers);
+    }
+    
+    console.error('❌ ===== END CLOUDINARY ERROR LOG =====');
     throw error;
   }
 };

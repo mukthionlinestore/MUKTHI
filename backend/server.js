@@ -82,8 +82,7 @@ app.options('*', (req, res) => {
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 app.use(fileUpload({
-  useTempFiles: true,
-  tempFileDir: '/tmp/',
+  useTempFiles: false, // Use memory instead of temp files for better Windows compatibility
   limits: { fileSize: 5 * 1024 * 1024 }, // 5MB limit
   abortOnLimit: true
 }));
@@ -131,6 +130,7 @@ app.use('/api/footer', require('./routes/footer'));
 app.use('/api/admin', require('./routes/admin'));
 app.use('/api/superadmin', require('./routes/superAdmin'));
 app.use('/api/upload', require('./routes/upload'));
+app.use('/api/notifications', require('./routes/notifications'));
 
 // Error handling middleware
 app.use((err, req, res, next) => {
@@ -147,7 +147,8 @@ app.use('*', (req, res) => {
 });
 
 const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => {
+app.listen(PORT, '0.0.0.0', () => {
   console.log(`Server running on port ${PORT}`);
   console.log(`Environment: ${process.env.NODE_ENV || 'development'}`);
+  console.log(`Server accessible from network at: http://[YOUR_IP]:${PORT}`);
 });
