@@ -307,10 +307,12 @@ const SuperAdminDashboard = () => {
   const updateConfigField = (field, value) => {
     if (!localConfig) return;
     
+    let newConfig;
+    
     // Handle nested object updates (e.g., paymentSettings.paymentMethod)
     if (field.includes('.')) {
       const keys = field.split('.');
-      const newConfig = JSON.parse(JSON.stringify(localConfig)); // Deep copy
+      newConfig = JSON.parse(JSON.stringify(localConfig)); // Deep copy
       let current = newConfig;
       
       // Navigate to the nested object
@@ -328,7 +330,7 @@ const SuperAdminDashboard = () => {
       setLocalConfig(newConfig);
     } else {
       // Handle simple field updates
-      const newConfig = { ...localConfig, [field]: value };
+      newConfig = { ...localConfig, [field]: value };
       setLocalConfig(newConfig);
     }
     

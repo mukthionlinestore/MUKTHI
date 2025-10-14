@@ -13,29 +13,7 @@ const WebsiteWrapper = ({ children }) => {
   const isAuthRoute = location?.pathname === '/login' || location?.pathname === '/register';
   const isSuperAdminRoute = location?.pathname?.startsWith('/superadmin');
 
-  // Show loading state while fetching config (but not for super admin routes)
-  if (loading && !isSuperAdminRoute) {
-    return (
-      <div className="min-h-screen bg-white flex items-center justify-center">
-        <div className="text-center">
-          <div className="w-8 h-8 border-4 border-blue-600 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-          <p className="text-gray-600">Loading...</p>
-        </div>
-      </div>
-    );
-  }
-
-  // Do not gate login/register to avoid redirect loops
-  if (isAuthRoute) {
-    return <>{children}</>;
-  }
-
-  // Show maintenance mode if enabled (but allow super admin)
-  if (isMaintenanceMode() && !isSuperAdmin) {
-    return <MaintenanceMode message={getMaintenanceMessage()} />;
-  }
-
-  // Update document title and meta tags
+  // Update document title and meta tags - MUST be before any returns
   React.useEffect(() => {
     if (config) {
       document.title = config.metaTitle || 'E-Shop';
@@ -63,6 +41,28 @@ const WebsiteWrapper = ({ children }) => {
       }
     }
   }, [config]);
+
+  // Show loading state while fetching config (but not for super admin routes)
+  if (loading && !isSuperAdminRoute) {
+    return (
+      <div className="min-h-screen bg-white flex items-center justify-center">
+        <div className="text-center">
+          <div className="w-8 h-8 border-4 border-blue-600 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+          <p className="text-gray-600">Loading...</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Do not gate login/register to avoid redirect loops
+  if (isAuthRoute) {
+    return <>{children}</>;
+  }
+
+  // Show maintenance mode if enabled (but allow super admin)
+  if (isMaintenanceMode() && !isSuperAdmin) {
+    return <MaintenanceMode message={getMaintenanceMessage()} />;
+  }
 
   return <>{children}</>;
 };

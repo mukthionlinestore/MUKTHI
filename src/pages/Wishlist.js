@@ -5,7 +5,8 @@ import { useWishlist } from '../context/WishlistContext';
 import { 
   FaArrowLeft, 
   FaRegHeart,
-  FaSpinner
+  FaSpinner,
+  FaHeart
 } from 'react-icons/fa';
 import ProductCard from '../components/products/ProductCard';
 

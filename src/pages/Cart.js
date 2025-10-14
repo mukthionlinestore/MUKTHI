@@ -22,7 +22,9 @@ import {
   FaCreditCard,
   FaGift,
   FaCheckCircle,
-  FaQuestionCircle
+  FaQuestionCircle,
+  FaStar,
+  FaFire
 } from 'react-icons/fa';
 import { toast } from 'react-toastify';
 
