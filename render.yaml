@@ -1,0 +1,64 @@
+# Render Blueprint for MUKTHI E-commerce Application
+# This file can be used to deploy both services automatically
+# Visit https://dashboard.render.com/select-repo?type=blueprint
+
+services:
+  # Backend API Service
+  - type: web
+    name: mukthi-backend
+    runtime: node
+    env: node
+    region: oregon
+    plan: free
+    buildCommand: cd backend && npm install
+    startCommand: cd backend && npm start
+    healthCheckPath: /
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 10000
+      - key: MONGODB_URI
+        sync: false  # Set this manually in Render dashboard
+      - key: JWT_SECRET
+        generateValue: true
+      - key: SESSION_SECRET
+        generateValue: true
+      - key: FRONTEND_URL
+        sync: false  # Set this after frontend is deployed
+      - key: CLOUDINARY_CLOUD_NAME
+        sync: false
+      - key: CLOUDINARY_API_KEY
+        sync: false
+      - key: CLOUDINARY_API_SECRET
+        sync: false
+      - key: GOOGLE_CLIENT_ID
+        sync: false
+      - key: GOOGLE_CLIENT_SECRET
+        sync: false
+      - key: RAZORPAY_KEY_ID
+        sync: false
+      - key: RAZORPAY_KEY_SECRET
+        sync: false
+
+  # Frontend Static Site
+  - type: web
+    name: mukthi-frontend
+    runtime: static
+    env: static
+    region: oregon
+    buildCommand: npm install && npm run build
+    staticPublishPath: ./build
+    pullRequestPreviewsEnabled: true
+    envVars:
+      - key: REACT_APP_API_URL
+        sync: false  # Set to backend URL after backend is deployed
+      - key: REACT_APP_GOOGLE_CLIENT_ID
+        sync: false
+      - key: REACT_APP_RAZORPAY_KEY_ID
+        sync: false
+    routes:
+      - type: rewrite
+        source: /*
+        destination: /index.html
+
