@@ -448,16 +448,29 @@ const SuperAdminDashboard = () => {
       }
       
       console.log('Saving config:', flattenedConfig);
-      console.log('Payment settings:', flattenedConfig.paymentSettings);
+      console.log('Payment settings being saved:', flattenedConfig.paymentSettings);
+      console.log('Payment method specifically:', flattenedConfig.paymentSettings?.paymentMethod);
       
       const result = await updateConfig(flattenedConfig);
+      console.log('Update result:', result);
+      
       if (result.success) {
         toast.success('Configuration saved successfully');
+        console.log('✅ Config saved successfully');
+        
         // Update the global config with the saved data to keep everything in sync
         if (result.config) {
           console.log('Updating global config with:', result.config);
+          console.log('Updated payment settings:', result.config.paymentSettings);
           setConfig(result.config);
         }
+        
+        // Force refresh the config to ensure all components get the update
+        setTimeout(() => {
+          console.log('🔄 Refreshing config after save...');
+          fetchConfig();
+        }, 1000);
+        
       } else {
         console.error('Save failed:', result);
         toast.error(result.error || 'Failed to save configuration');

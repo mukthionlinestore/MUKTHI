@@ -446,6 +446,20 @@ websiteConfigSchema.statics.getInstance = async function() {
   let config = await this.findOne();
   if (!config) {
     config = new this();
+    // Ensure paymentSettings is properly initialized
+    if (!config.paymentSettings) {
+      config.paymentSettings = {
+        paymentMethod: 'gateway',
+        whatsappNumber: '',
+        instagramUsername: '',
+        paymentGatewayEnabled: true,
+        whatsappEnabled: false,
+        instagramEnabled: false,
+        stripeEnabled: true,
+        razorpayEnabled: true,
+        codEnabled: true
+      };
+    }
     await config.save();
   }
   return config;

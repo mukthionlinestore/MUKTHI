@@ -132,11 +132,17 @@ router.put('/config', superAdminAuth, async (req, res) => {
         Object.keys(req.body.paymentSettings).forEach(subKey => {
           config.paymentSettings[subKey] = req.body.paymentSettings[subKey];
         });
+        console.log('Updated paymentSettings:', config.paymentSettings);
       } else if (config.schema.paths[key]) {
         // Handle simple field updates
         config[key] = req.body[key];
       }
     });
+
+    // Mark the paymentSettings field as modified to ensure it gets saved
+    if (req.body.paymentSettings) {
+      config.markModified('paymentSettings');
+    }
 
     console.log('Config after update:', config.paymentSettings);
     console.log('About to save config...');
