@@ -174,8 +174,10 @@ export const WebsiteConfigProvider = ({ children }) => {
       console.log('Sending config to API:', newConfig);
       const response = await axios.put('/api/superadmin/config', newConfig);
       console.log('API response:', response.data);
-      // Don't automatically update the global config to avoid overriding local changes
-      // The component should handle updating its local state
+      
+      // Refresh the global config to ensure all components get the updated data
+      await fetchConfig();
+      
       return { success: true, config: response.data.config };
     } catch (err) {
       console.error('Failed to update website config:', err);
