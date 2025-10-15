@@ -532,25 +532,24 @@ const Checkout = () => {
   useEffect(() => {
     console.log('Payment config in checkout:', config?.paymentSettings);
     console.log('Current payment method state:', paymentMethod);
-    if (config?.paymentSettings?.paymentMethod) {
-      switch (config.paymentSettings.paymentMethod) {
-        case 'gateway':
-          setPaymentMethod('Credit Card');
-          break;
-        case 'whatsapp':
-          setPaymentMethod('WhatsApp');
-          break;
-        case 'instagram':
-          setPaymentMethod('Instagram');
-          break;
-        default:
-          setPaymentMethod('Credit Card');
+    
+    if (config?.paymentSettings) {
+      // Set default payment method based on enabled flags
+      if (config.paymentSettings.paymentGatewayEnabled) {
+        setPaymentMethod('Credit Card');
+      } else if (config.paymentSettings.whatsappEnabled) {
+        setPaymentMethod('WhatsApp');
+      } else if (config.paymentSettings.instagramEnabled) {
+        setPaymentMethod('Instagram');
+      } else {
+        // Fallback to Credit Card if no method is enabled
+        setPaymentMethod('Credit Card');
       }
     } else {
       // Fallback to Credit Card if no config is available
       setPaymentMethod('Credit Card');
     }
-  }, [config?.paymentSettings?.paymentMethod]);
+  }, [config?.paymentSettings?.paymentGatewayEnabled, config?.paymentSettings?.whatsappEnabled, config?.paymentSettings?.instagramEnabled]);
 
   const fetchDirectBuyProduct = async (productId) => {
     try {
@@ -1172,13 +1171,13 @@ const Checkout = () => {
                       </div>
                       <h2 className="text-lg sm:text-xl font-semibold text-gray-900">Payment Method</h2>
                     </div>
-                    {config?.paymentSettings?.paymentMethod && (
+                    {config?.paymentSettings?.paymentGatewayEnabled || config?.paymentSettings?.whatsappEnabled || config?.paymentSettings?.instagramEnabled ? (
                       <div className="text-xs sm:text-sm text-gray-500 bg-gray-100 px-2 py-1 rounded-full">
-                        {config.paymentSettings.paymentMethod === 'gateway' && 'Payment Gateway'}
-                        {config.paymentSettings.paymentMethod === 'whatsapp' && 'WhatsApp Orders'}
-                        {config.paymentSettings.paymentMethod === 'instagram' && 'Instagram Orders'}
+                        {config?.paymentSettings?.paymentGatewayEnabled && 'Payment Gateway'}
+                        {config?.paymentSettings?.whatsappEnabled && 'WhatsApp Orders'}
+                        {config?.paymentSettings?.instagramEnabled && 'Instagram Orders'}
                       </div>
-                    )}
+                    ) : null}
                   </div>
 
                   {/* Payment Method Selection */}
@@ -1189,7 +1188,7 @@ const Checkout = () => {
                         <span className="text-sm text-gray-600">Loading payment options...</span>
                         <span className="text-xs text-gray-500 mt-1">Please wait while we load your payment settings</span>
                       </div>
-                    ) : !config?.paymentSettings?.paymentMethod ? (
+                    ) : !config?.paymentSettings?.paymentGatewayEnabled && !config?.paymentSettings?.whatsappEnabled && !config?.paymentSettings?.instagramEnabled ? (
                       <div className="flex flex-col items-center justify-center p-8 text-center">
                         <div className="w-12 h-12 bg-red-100 rounded-full flex items-center justify-center mb-3">
                           <FaCreditCard className="w-6 h-6 text-red-600" />
@@ -1200,7 +1199,7 @@ const Checkout = () => {
                     ) : (
                       <>
                         {/* Payment Gateway (Razorpay) */}
-                        {config?.paymentSettings?.paymentMethod === 'gateway' && (
+                        {config?.paymentSettings?.paymentGatewayEnabled && (
                       <>
                         <label className={`flex items-center p-3 sm:p-4 border-2 rounded-lg cursor-pointer transition-all duration-200 hover:shadow-md ${
                           paymentMethod === 'Credit Card' 
@@ -1275,7 +1274,7 @@ const Checkout = () => {
                     )}
 
                     {/* WhatsApp Payment */}
-                    {config?.paymentSettings?.paymentMethod === 'whatsapp' && (
+                    {config?.paymentSettings?.whatsappEnabled && (
                       <label className={`flex items-center p-3 sm:p-4 border-2 rounded-lg cursor-pointer transition-all duration-200 hover:shadow-md ${
                         paymentMethod === 'WhatsApp' 
                           ? 'border-green-500 bg-green-50' 
@@ -1305,7 +1304,7 @@ const Checkout = () => {
                     )}
 
                     {/* Instagram Payment */}
-                    {config?.paymentSettings?.paymentMethod === 'instagram' && (
+                    {config?.paymentSettings?.instagramEnabled && (
                       <label className={`flex items-center p-3 sm:p-4 border-2 rounded-lg cursor-pointer transition-all duration-200 hover:shadow-md ${
                         paymentMethod === 'Instagram' 
                           ? 'border-purple-500 bg-purple-50' 

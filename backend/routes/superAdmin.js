@@ -101,7 +101,15 @@ router.get('/public-config', async (req, res) => {
       successColor: config.successColor,
       warningColor: config.warningColor,
       errorColor: config.errorColor,
-      infoColor: config.infoColor
+      infoColor: config.infoColor,
+      // Include payment settings for checkout page
+      paymentSettings: {
+        paymentGatewayEnabled: config.paymentSettings?.paymentGatewayEnabled || false,
+        whatsappEnabled: config.paymentSettings?.whatsappEnabled || false,
+        instagramEnabled: config.paymentSettings?.instagramEnabled || false,
+        whatsappNumber: config.paymentSettings?.whatsappNumber || '',
+        instagramUsername: config.paymentSettings?.instagramUsername || ''
+      }
     };
     res.json(publicConfig);
   } catch (error) {

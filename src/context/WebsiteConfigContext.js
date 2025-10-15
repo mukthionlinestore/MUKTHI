@@ -151,17 +151,33 @@ export const WebsiteConfigProvider = ({ children }) => {
       let response;
       if (isSuperAdmin) {
         // Use authenticated endpoint for super admin (includes all config)
+        console.log('🔐 Fetching super admin config...');
         response = await axios.get('/api/superadmin/config');
       } else {
         // Use public endpoint for regular users (includes logo and public config)
+        console.log('🌐 Fetching public config...');
         response = await axios.get('/api/superadmin/public-config');
       }
       
-      setConfig({ ...defaultConfig, ...response.data });
+      console.log('📡 API Response:', response.data);
+      console.log('💳 Payment Settings:', response.data.paymentSettings);
+      
+      setConfig(response.data);
       setError(null);
     } catch (err) {
-      console.error('Failed to fetch website config:', err);
-      setConfig(defaultConfig);
+      console.error('❌ Failed to fetch website config:', err);
+      console.error('❌ Error details:', err.response?.data);
+      // Use minimal fallback config instead of full default
+      setConfig({
+        websiteName: 'MUKHTI',
+        paymentSettings: {
+          paymentGatewayEnabled: true,
+          whatsappEnabled: false,
+          instagramEnabled: false,
+          whatsappNumber: '',
+          instagramUsername: ''
+        }
+      });
       setError('Failed to load website configuration');
     } finally {
       setLoading(false);
@@ -175,8 +191,8 @@ export const WebsiteConfigProvider = ({ children }) => {
       const response = await axios.put('/api/superadmin/config', newConfig);
       console.log('API response:', response.data);
       
-      // Refresh the global config to ensure all components get the updated data
-      await fetchConfig();
+      // Update local state with the response data instead of fetching
+      setConfig(prevConfig => ({ ...prevConfig, ...response.data.config }));
       
       return { success: true, config: response.data.config };
     } catch (err) {

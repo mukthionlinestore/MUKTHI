@@ -49,11 +49,10 @@ const SuperAdminDashboard = () => {
       fetchDashboardStats();
     } else if (activeTab === 'users') {
       fetchUsers();
-    } else if (activeTab === 'website' || activeTab === 'theme' || activeTab === 'payment') {
-      fetchConfig();
     } else if (activeTab === 'system') {
       fetchSystemLogs();
     }
+    // Removed automatic fetchConfig() calls to prevent overriding saved changes
   }, [activeTab]);
 
   // Sync local config with global config
@@ -495,12 +494,6 @@ const SuperAdminDashboard = () => {
           console.log('Updated payment settings:', result.config.paymentSettings);
           setConfig(result.config);
         }
-        
-        // Force refresh the config to ensure all components get the update
-        setTimeout(() => {
-          console.log('🔄 Refreshing config after save...');
-          fetchConfig();
-        }, 1000);
         
       } else {
         console.error('Save failed:', result);
@@ -1797,61 +1790,49 @@ const SuperAdminDashboard = () => {
 
             {/* Payment Method Selection */}
             <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 sm:p-6">
-              <h3 className="text-base sm:text-lg font-semibold text-gray-900 mb-4">Payment Method</h3>
-              <div className="mb-4 p-2 bg-gray-100 rounded text-xs">
-                <strong>Debug Info:</strong><br/>
-                Current paymentMethod: {localConfig?.paymentSettings?.paymentMethod || 'undefined'}<br/>
-                Gateway Enabled: {localConfig?.paymentSettings?.paymentGatewayEnabled ? 'true' : 'false'}<br/>
-                WhatsApp Enabled: {localConfig?.paymentSettings?.whatsappEnabled ? 'true' : 'false'}<br/>
-                Instagram Enabled: {localConfig?.paymentSettings?.instagramEnabled ? 'true' : 'false'}<br/>
-                WhatsApp Number: {localConfig?.paymentSettings?.whatsappNumber || 'not set'}<br/>
-                Full PaymentSettings: {JSON.stringify(localConfig?.paymentSettings || {})}
-              </div>
+              <h3 className="text-base sm:text-lg font-semibold text-gray-900 mb-4">Payment Methods</h3>
+              <p className="text-xs text-gray-600 mb-4">Select multiple payment methods to enable for customers</p>
               <div className="space-y-3">
                 {/* Payment Gateway Option */}
                 <label className={`flex items-center p-4 border-2 rounded-lg cursor-pointer transition-all duration-200 hover:shadow-md ${
-                  localConfig?.paymentSettings?.paymentMethod === 'gateway' 
+                  localConfig?.paymentSettings?.paymentGatewayEnabled 
                     ? 'border-blue-500 bg-blue-50' 
                     : 'border-gray-200 hover:border-gray-300'
                 }`}>
                   <input
-                    type="radio"
-                    name="paymentMethod"
-                    value="gateway"
-                    checked={localConfig?.paymentSettings?.paymentMethod === 'gateway'}
+                    type="checkbox"
+                    checked={localConfig?.paymentSettings?.paymentGatewayEnabled || false}
                     onChange={(e) => {
-                      console.log('Gateway radio clicked:', e.target.value);
-                      updatePaymentMethod(e.target.value);
+                      console.log('Payment Gateway checkbox clicked:', e.target.checked);
+                      updateConfigField('paymentSettings.paymentGatewayEnabled', e.target.checked);
                     }}
-                    className="w-4 h-4 text-blue-600 focus:ring-blue-500"
+                    className="w-4 h-4 text-blue-600 focus:ring-blue-500 rounded"
                   />
                   <div className="ml-3 flex items-center">
                     <div className="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center mr-3">
                       <FaDollarSign className="w-4 h-4 text-blue-600" />
                     </div>
                     <div>
-                      <div className="text-sm sm:text-base font-medium text-gray-900">Payment Gateway (Razorpay)</div>
-                      <div className="text-xs text-gray-500">Secure online payments with multiple options</div>
+                      <div className="text-sm sm:text-base font-medium text-gray-900">Payment Gateway</div>
+                      <div className="text-xs text-gray-500">Credit/Debit cards, Razorpay, PayPal, Cash on Delivery</div>
                     </div>
                   </div>
                 </label>
 
                 {/* WhatsApp Option */}
                 <label className={`flex items-center p-4 border-2 rounded-lg cursor-pointer transition-all duration-200 hover:shadow-md ${
-                  localConfig?.paymentSettings?.paymentMethod === 'whatsapp' 
+                  localConfig?.paymentSettings?.whatsappEnabled 
                     ? 'border-green-500 bg-green-50' 
                     : 'border-gray-200 hover:border-gray-300'
                 }`}>
                   <input
-                    type="radio"
-                    name="paymentMethod"
-                    value="whatsapp"
-                    checked={localConfig?.paymentSettings?.paymentMethod === 'whatsapp'}
+                    type="checkbox"
+                    checked={localConfig?.paymentSettings?.whatsappEnabled || false}
                     onChange={(e) => {
-                      console.log('WhatsApp radio clicked:', e.target.value);
-                      updatePaymentMethod(e.target.value);
+                      console.log('WhatsApp checkbox clicked:', e.target.checked);
+                      updateConfigField('paymentSettings.whatsappEnabled', e.target.checked);
                     }}
-                    className="w-4 h-4 text-green-600 focus:ring-green-500"
+                    className="w-4 h-4 text-green-600 focus:ring-green-500 rounded"
                   />
                   <div className="ml-3 flex items-center">
                     <div className="w-8 h-8 bg-green-100 rounded-lg flex items-center justify-center mr-3">
@@ -1866,20 +1847,18 @@ const SuperAdminDashboard = () => {
 
                 {/* Instagram Option */}
                 <label className={`flex items-center p-4 border-2 rounded-lg cursor-pointer transition-all duration-200 hover:shadow-md ${
-                  localConfig?.paymentSettings?.paymentMethod === 'instagram' 
+                  localConfig?.paymentSettings?.instagramEnabled 
                     ? 'border-purple-500 bg-purple-50' 
                     : 'border-gray-200 hover:border-gray-300'
                 }`}>
                   <input
-                    type="radio"
-                    name="paymentMethod"
-                    value="instagram"
-                    checked={localConfig?.paymentSettings?.paymentMethod === 'instagram'}
+                    type="checkbox"
+                    checked={localConfig?.paymentSettings?.instagramEnabled || false}
                     onChange={(e) => {
-                      console.log('Instagram radio clicked:', e.target.value);
-                      updatePaymentMethod(e.target.value);
+                      console.log('Instagram checkbox clicked:', e.target.checked);
+                      updateConfigField('paymentSettings.instagramEnabled', e.target.checked);
                     }}
-                    className="w-4 h-4 text-purple-600 focus:ring-purple-500"
+                    className="w-4 h-4 text-purple-600 focus:ring-purple-500 rounded"
                   />
                   <div className="ml-3 flex items-center">
                     <div className="w-8 h-8 bg-gradient-to-r from-purple-100 to-pink-100 rounded-lg flex items-center justify-center mr-3">
@@ -1895,7 +1874,7 @@ const SuperAdminDashboard = () => {
             </div>
 
             {/* WhatsApp Settings */}
-            {localConfig?.paymentSettings?.paymentMethod === 'whatsapp' && (
+            {localConfig?.paymentSettings?.whatsappEnabled && (
               <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 sm:p-6">
                 <div className="flex items-center mb-4">
                   <div className="w-8 h-8 bg-green-100 rounded-lg flex items-center justify-center mr-3">
@@ -1944,7 +1923,7 @@ const SuperAdminDashboard = () => {
             )}
 
             {/* Instagram Settings */}
-            {localConfig?.paymentSettings?.paymentMethod === 'instagram' && (
+            {localConfig?.paymentSettings?.instagramEnabled && (
               <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 sm:p-6">
                 <div className="flex items-center mb-4">
                   <div className="w-8 h-8 bg-gradient-to-r from-purple-100 to-pink-100 rounded-lg flex items-center justify-center mr-3">

@@ -378,19 +378,7 @@ const websiteConfigSchema = new mongoose.Schema({
   
   // Payment Configuration
   paymentSettings: {
-    paymentMethod: {
-      type: String,
-      enum: ['gateway', 'whatsapp', 'instagram'],
-      default: 'gateway'
-    },
-    whatsappNumber: {
-      type: String,
-      default: ''
-    },
-    instagramUsername: {
-      type: String,
-      default: ''
-    },
+    // Multiple payment methods can be enabled simultaneously
     paymentGatewayEnabled: {
       type: Boolean,
       default: true
@@ -403,7 +391,16 @@ const websiteConfigSchema = new mongoose.Schema({
       type: Boolean,
       default: false
     },
-    // Legacy payment settings for backward compatibility
+    // Contact information for social payment methods
+    whatsappNumber: {
+      type: String,
+      default: ''
+    },
+    instagramUsername: {
+      type: String,
+      default: ''
+    },
+    // Individual gateway settings
     stripeEnabled: {
       type: Boolean,
       default: true
@@ -419,6 +416,12 @@ const websiteConfigSchema = new mongoose.Schema({
     codEnabled: {
       type: Boolean,
       default: true
+    },
+    // Legacy field for backward compatibility (deprecated)
+    paymentMethod: {
+      type: String,
+      enum: ['gateway', 'whatsapp', 'instagram'],
+      default: 'gateway'
     }
   },
   
@@ -449,15 +452,16 @@ websiteConfigSchema.statics.getInstance = async function() {
     // Ensure paymentSettings is properly initialized
     if (!config.paymentSettings) {
       config.paymentSettings = {
-        paymentMethod: 'gateway',
-        whatsappNumber: '',
-        instagramUsername: '',
         paymentGatewayEnabled: true,
         whatsappEnabled: false,
         instagramEnabled: false,
+        whatsappNumber: '',
+        instagramUsername: '',
         stripeEnabled: true,
         razorpayEnabled: true,
-        codEnabled: true
+        paypalEnabled: true,
+        codEnabled: true,
+        paymentMethod: 'gateway' // Legacy field
       };
     }
     await config.save();
