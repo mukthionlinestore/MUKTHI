@@ -148,16 +148,28 @@ router.get('/', async (req, res) => {
 // Get single product
 router.get('/:id', async (req, res) => {
   try {
+    console.log('🔍 Fetching product with ID:', req.params.id);
+    
     const product = await Product.findById(req.params.id)
       .populate('reviews.user', 'name avatar');
 
     if (!product) {
+      console.log('❌ Product not found:', req.params.id);
       return res.status(404).json({ message: 'Product not found' });
     }
 
+    console.log('✅ Product found:', product.name);
+    
+    // Add cache control headers to prevent 304 issues
+    res.set({
+      'Cache-Control': 'no-cache, no-store, must-revalidate',
+      'Pragma': 'no-cache',
+      'Expires': '0'
+    });
+    
     res.json(product);
   } catch (error) {
-    console.error(error);
+    console.error('❌ Error fetching product:', error);
     res.status(500).json({ message: 'Server error' });
   }
 });

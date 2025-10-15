@@ -4,6 +4,7 @@ import { useCart } from "../context/CartContext";
 import { useWishlist } from "../context/WishlistContext";
 import { useAuth } from "../context/AuthContext";
 import { useSettings } from "../context/SettingsContext";
+import axios from "../config/axios";
 import SizeColorModal from "../components/products/SizeColorModal";
 import ProductCard from "../components/products/ProductCard";
 import { 
@@ -126,33 +127,47 @@ export default function ProductDetail() {
 
   // Fetch product
   useEffect(() => {
-    const run = async () => {
+    const fetchProduct = async () => {
       try {
         setLoading(true);
-        const res = await fetch(`/api/products/${id}`);
-        if (!res.ok) throw new Error("Product not found");
-        const data = await res.json();
-        setProduct(data);
-        if (data.thumbnailIndex != null) setSelectedImage(data.thumbnailIndex);
-        fetchRelated(data.category, data._id);
-      } catch (e) {
-        showToast(e.message || "Failed to load product", "error");
+        console.log('Fetching product with ID:', id);
+        
+        const response = await axios.get(`/api/products/${id}`);
+        console.log('Product response:', response.data);
+        
+        setProduct(response.data);
+        if (response.data.thumbnailIndex != null) {
+          setSelectedImage(response.data.thumbnailIndex);
+        }
+        fetchRelated(response.data.category, response.data._id);
+      } catch (error) {
+        console.error('Error fetching product:', error);
+        console.error('Error response:', error.response?.data);
+        console.error('Error status:', error.response?.status);
+        
+        if (error.response?.status === 404) {
+          showToast("Product not found", "error");
+        } else {
+          showToast(error.message || "Failed to load product", "error");
+        }
       } finally {
         setLoading(false);
       }
     };
-    if (id) run();
+
+    if (id) {
+      fetchProduct();
+    }
   }, [id]);
 
   const fetchRelated = async (category, currentId) => {
     try {
-      const res = await fetch(`/api/products?category=${category}&limit=4`);
-      if (res.ok) {
-        const data = await res.json();
-        const filtered = (data.products || []).filter((p) => p._id !== currentId).slice(0, 4);
-        setRelated(filtered);
-      }
-    } catch {}
+      const response = await axios.get(`/api/products?category=${category}&limit=4`);
+      const filtered = (response.data.products || []).filter((p) => p._id !== currentId).slice(0, 4);
+      setRelated(filtered);
+    } catch (error) {
+      console.error('Error fetching related products:', error);
+    }
   };
 
   const discountPct =
