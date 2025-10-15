@@ -303,6 +303,37 @@ const SuperAdminDashboard = () => {
     `;
   };
 
+  // Helper function to update payment method and related flags
+  const updatePaymentMethod = (method) => {
+    if (!localConfig) return;
+    
+    console.log('Updating payment method to:', method);
+    
+    // Create new payment settings with updated method and flags
+    const newPaymentSettings = {
+      ...localConfig.paymentSettings,
+      paymentMethod: method,
+      // Reset all enabled flags
+      paymentGatewayEnabled: false,
+      whatsappEnabled: false,
+      instagramEnabled: false,
+      // Set the selected method as enabled
+      ...(method === 'gateway' && { paymentGatewayEnabled: true }),
+      ...(method === 'whatsapp' && { whatsappEnabled: true }),
+      ...(method === 'instagram' && { instagramEnabled: true })
+    };
+    
+    console.log('New payment settings:', newPaymentSettings);
+    
+    // Update the local config
+    const newConfig = {
+      ...localConfig,
+      paymentSettings: newPaymentSettings
+    };
+    
+    setLocalConfig(newConfig);
+  };
+
   // Helper function to update local config
   const updateConfigField = (field, value) => {
     if (!localConfig) return;
@@ -1770,7 +1801,11 @@ const SuperAdminDashboard = () => {
               <div className="mb-4 p-2 bg-gray-100 rounded text-xs">
                 <strong>Debug Info:</strong><br/>
                 Current paymentMethod: {localConfig?.paymentSettings?.paymentMethod || 'undefined'}<br/>
-                PaymentSettings: {JSON.stringify(localConfig?.paymentSettings || {})}
+                Gateway Enabled: {localConfig?.paymentSettings?.paymentGatewayEnabled ? 'true' : 'false'}<br/>
+                WhatsApp Enabled: {localConfig?.paymentSettings?.whatsappEnabled ? 'true' : 'false'}<br/>
+                Instagram Enabled: {localConfig?.paymentSettings?.instagramEnabled ? 'true' : 'false'}<br/>
+                WhatsApp Number: {localConfig?.paymentSettings?.whatsappNumber || 'not set'}<br/>
+                Full PaymentSettings: {JSON.stringify(localConfig?.paymentSettings || {})}
               </div>
               <div className="space-y-3">
                 {/* Payment Gateway Option */}
@@ -1786,7 +1821,7 @@ const SuperAdminDashboard = () => {
                     checked={localConfig?.paymentSettings?.paymentMethod === 'gateway'}
                     onChange={(e) => {
                       console.log('Gateway radio clicked:', e.target.value);
-                      updateConfigField('paymentSettings.paymentMethod', e.target.value);
+                      updatePaymentMethod(e.target.value);
                     }}
                     className="w-4 h-4 text-blue-600 focus:ring-blue-500"
                   />
@@ -1814,7 +1849,7 @@ const SuperAdminDashboard = () => {
                     checked={localConfig?.paymentSettings?.paymentMethod === 'whatsapp'}
                     onChange={(e) => {
                       console.log('WhatsApp radio clicked:', e.target.value);
-                      updateConfigField('paymentSettings.paymentMethod', e.target.value);
+                      updatePaymentMethod(e.target.value);
                     }}
                     className="w-4 h-4 text-green-600 focus:ring-green-500"
                   />
@@ -1842,7 +1877,7 @@ const SuperAdminDashboard = () => {
                     checked={localConfig?.paymentSettings?.paymentMethod === 'instagram'}
                     onChange={(e) => {
                       console.log('Instagram radio clicked:', e.target.value);
-                      updateConfigField('paymentSettings.paymentMethod', e.target.value);
+                      updatePaymentMethod(e.target.value);
                     }}
                     className="w-4 h-4 text-purple-600 focus:ring-purple-500"
                   />
