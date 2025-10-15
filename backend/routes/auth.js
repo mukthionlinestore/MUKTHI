@@ -48,10 +48,101 @@ router.post('/register', async (req, res) => {
     // Check if user already exists
     const existingUser = await User.findOne({ email: email.toLowerCase() });
     if (existingUser) {
-      return res.status(400).json({ 
-        success: false, 
-        message: 'User already exists with this email' 
-      });
+      // If user exists but not verified, allow resending OTP
+      if (!existingUser.isVerified) {
+        console.log('User exists but not verified, resending OTP...');
+        
+        // Generate new OTP
+        const verificationOTP = Math.floor(100000 + Math.random() * 900000).toString();
+        const verificationOTPExpiry = new Date(Date.now() + 15 * 60 * 1000); // 15 minutes
+        
+        // Update existing user with new OTP
+        existingUser.emailVerificationOTP = verificationOTP;
+        existingUser.emailVerificationOTPExpiry = verificationOTPExpiry;
+        await existingUser.save();
+        
+        // Send verification email
+        try {
+          console.log('Creating email transporter...');
+          const transporter = createTransporter();
+          
+          console.log('Resending verification email to:', email);
+          const mailOptions = {
+            from: process.env.EMAIL_USER,
+            to: email,
+            subject: 'Verify Your Email - MUKHTI Store (Resend)',
+            html: `
+              <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
+                <div style="background: linear-gradient(135deg, #3B82F6, #8B5CF6); padding: 30px; border-radius: 10px 10px 0 0; text-align: center;">
+                  <h1 style="color: white; margin: 0; font-size: 28px;">MUKHTI Store</h1>
+                  <p style="color: rgba(255,255,255,0.9); margin: 10px 0 0 0;">Premium Store</p>
+                </div>
+                
+                <div style="background: #f8f9fa; padding: 30px; border-radius: 0 0 10px 10px;">
+                  <h2 style="color: #333; margin: 0 0 20px 0;">Complete Your Registration</h2>
+                  
+                  <p style="color: #666; line-height: 1.6; margin: 0 0 20px 0;">
+                    Hello ${name},
+                  </p>
+                  
+                  <p style="color: #666; line-height: 1.6; margin: 0 0 20px 0;">
+                    Here's your new verification code to complete your registration:
+                  </p>
+                  
+                  <div style="background: #fff; border: 2px solid #3B82F6; border-radius: 8px; padding: 20px; text-align: center; margin: 20px 0;">
+                    <h3 style="color: #3B82F6; margin: 0; font-size: 32px; letter-spacing: 5px; font-family: monospace;">${verificationOTP}</h3>
+                  </div>
+                  
+                  <p style="color: #666; line-height: 1.6; margin: 20px 0;">
+                    Enter this OTP code on the verification page to activate your account. 
+                    This code will expire in <strong>15 minutes</strong>.
+                  </p>
+                  
+                  <p style="color: #666; line-height: 1.6; margin: 20px 0 0 0;">
+                    Best regards,<br>
+                    The MUKHTI Store Team
+                  </p>
+                </div>
+              </div>
+            `
+          };
+
+          await transporter.sendMail(mailOptions);
+          console.log('Verification email resent successfully to:', email);
+          
+          return res.status(200).json({
+            success: true,
+            message: 'New verification code sent to your email. Please check your inbox.',
+            user: {
+              id: existingUser._id,
+              name: existingUser.name,
+              email: existingUser.email,
+              isVerified: existingUser.isVerified
+            },
+            verificationOTP: process.env.NODE_ENV === 'development' ? verificationOTP : undefined
+          });
+
+        } catch (emailError) {
+          console.error('Email sending error:', emailError);
+          
+          return res.status(200).json({
+            success: true,
+            message: 'New verification code generated. Check your email or contact support if you don\'t receive it.',
+            user: {
+              id: existingUser._id,
+              name: existingUser.name,
+              email: existingUser.email,
+              isVerified: existingUser.isVerified
+            },
+            verificationOTP: process.env.NODE_ENV === 'development' ? verificationOTP : undefined
+          });
+        }
+      } else {
+        return res.status(400).json({ 
+          success: false, 
+          message: 'User already exists with this email' 
+        });
+      }
     }
 
     // Generate 6-digit OTP
