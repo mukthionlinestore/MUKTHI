@@ -145,7 +145,10 @@ async function seedDatabase() {
         },
         
         maintenanceMode: false,
-        maintenanceMessage: 'We are currently under maintenance. Please check back soon.'
+        maintenanceMessage: 'We are currently under maintenance. Please check back soon.',
+        
+        // Background Theme
+        backgroundTheme: 'type1'
       });
       console.log('✅ Created default WebsiteConfig');
     } else {

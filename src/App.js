@@ -10,7 +10,7 @@ import { CartProvider } from './context/CartContext';
 import { WishlistProvider } from './context/WishlistContext';
 import { SettingsProvider } from './context/SettingsContext';
 import { FooterProvider } from './context/FooterContext';
-import { WebsiteConfigProvider } from './context/WebsiteConfigContext';
+import { WebsiteConfigProvider, useWebsiteConfig } from './context/WebsiteConfigContext';
 import { HomePageSettingsProvider } from './context/HomePageSettingsContext';
 import { NotificationProvider } from './context/NotificationContext';
 
@@ -63,6 +63,66 @@ import ManageBrands from './pages/admin/ManageBrands';
 // Super Admin Pages
 import SuperAdminDashboard from './pages/SuperAdminDashboard';
 
+// Dynamic Background Component
+function DynamicBackground() {
+  const { config } = useWebsiteConfig();
+  
+  const theme = config?.backgroundTheme || 'type1';
+  
+  // Define gradient classes for each theme
+  const gradientClasses = {
+    type1: 'bg-gradient-to-br from-blue-600/20 via-transparent to-purple-600/20',
+    type2: 'bg-gradient-to-br from-red-600/20 via-transparent to-red-800/20',
+    type3: 'bg-gradient-to-br from-red-900/20 via-transparent to-red-950/20',
+    type4: 'bg-gradient-to-br from-amber-600/20 via-transparent to-amber-800/20'
+  };
+  
+  // Define animated element colors for each theme
+  const animatedColors = {
+    type1: {
+      color1: 'bg-blue-500/10',
+      color2: 'bg-purple-500/10',
+      color3: 'bg-pink-500/10',
+      color4: 'bg-green-500/10'
+    },
+    type2: {
+      color1: 'bg-red-500/10',
+      color2: 'bg-red-600/10',
+      color3: 'bg-red-700/10',
+      color4: 'bg-red-800/10'
+    },
+    type3: {
+      color1: 'bg-red-800/10',
+      color2: 'bg-red-900/10',
+      color3: 'bg-red-950/10',
+      color4: 'bg-rose-900/10'
+    },
+    type4: {
+      color1: 'bg-amber-600/10',
+      color2: 'bg-amber-700/10',
+      color3: 'bg-yellow-600/10',
+      color4: 'bg-yellow-700/10'
+    }
+  };
+  
+  const colors = animatedColors[theme] || animatedColors.type1;
+  
+  return (
+    <>
+      {/* Single Gradient Overlay for Entire Application */}
+      <div className={`absolute inset-0 pointer-events-none ${gradientClasses[theme] || gradientClasses.type1}`}></div>
+      
+      {/* Animated Background Elements */}
+      <div className="absolute inset-0">
+        <div className={`absolute top-10 left-10 w-24 h-24 rounded-full animate-pulse ${colors.color1}`}></div>
+        <div className={`absolute top-20 right-20 w-16 h-16 rounded-full animate-pulse animation-delay-1000 ${colors.color2}`}></div>
+        <div className={`absolute bottom-10 left-1/4 w-20 h-20 rounded-full animate-pulse animation-delay-2000 ${colors.color3}`}></div>
+        <div className={`absolute bottom-20 right-1/3 w-12 h-12 rounded-full animate-pulse animation-delay-3000 ${colors.color4}`}></div>
+      </div>
+    </>
+  );
+}
+
 function App() {
   return (
     <AuthProvider>
@@ -77,16 +137,8 @@ function App() {
                   <Router>
                     <WebsiteWrapper>
                       <div className="min-h-screen bg-gray-50 relative">
-                      {/* Single Gradient Overlay for Entire Application */}
-                      <div className="absolute inset-0 bg-gradient-to-br from-blue-600/20 via-transparent to-purple-600/20 pointer-events-none"></div>
-                      
-                      {/* Animated Background Elements */}
-                      <div className="absolute inset-0">
-                        <div className="absolute top-10 left-10 w-24 h-24 bg-blue-500/10 rounded-full animate-pulse"></div>
-                        <div className="absolute top-20 right-20 w-16 h-16 bg-purple-500/10 rounded-full animate-pulse animation-delay-1000"></div>
-                        <div className="absolute bottom-10 left-1/4 w-20 h-20 bg-pink-500/10 rounded-full animate-pulse animation-delay-2000"></div>
-                        <div className="absolute bottom-20 right-1/3 w-12 h-12 bg-green-500/10 rounded-full animate-pulse animation-delay-3000"></div>
-                      </div>
+                      {/* Dynamic Background based on configuration */}
+                      <DynamicBackground />
                       <div className="relative z-10">
                         <Navbar />
                         <main>

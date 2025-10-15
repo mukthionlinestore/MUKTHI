@@ -1076,6 +1076,125 @@ const SuperAdminDashboard = () => {
               </div>
             ) : (
               <div className="space-y-4 sm:space-y-6">
+                {/* Background Theme Selection */}
+                <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 sm:p-6">
+                  <h3 className="text-base sm:text-lg font-semibold text-gray-900 mb-4">Background Theme</h3>
+                  <p className="text-xs text-gray-600 mb-4">Choose the background color theme for your website</p>
+                  <div className="space-y-3">
+                    {/* Type 1 - Your Actual Color (Blue/Purple) */}
+                    <label className={`flex items-center p-4 border-2 rounded-lg cursor-pointer transition-all duration-200 hover:shadow-md ${
+                      localConfig?.backgroundTheme === 'type1' 
+                        ? 'border-blue-500 bg-blue-50' 
+                        : 'border-gray-200 hover:border-gray-300'
+                    }`}>
+                      <input
+                        type="radio"
+                        name="backgroundTheme"
+                        value="type1"
+                        checked={localConfig?.backgroundTheme === 'type1'}
+                        onChange={(e) => {
+                          console.log('Type 1 radio clicked:', e.target.value);
+                          updateConfigField('backgroundTheme', e.target.value);
+                        }}
+                        className="w-4 h-4 text-blue-600 focus:ring-blue-500"
+                      />
+                      <div className="ml-3 flex items-center">
+                        <div className="w-8 h-8 bg-gradient-to-br from-blue-600/20 via-transparent to-purple-600/20 rounded-lg mr-3 flex items-center justify-center">
+                          <span className="text-blue-600 text-sm font-bold">1</span>
+                        </div>
+                        <div>
+                          <div className="text-sm sm:text-base font-medium text-gray-900">Type 1 (Blue/Purple)</div>
+                          <div className="text-xs text-gray-500">Your original color scheme with blue and purple gradients</div>
+                        </div>
+                      </div>
+                    </label>
+
+                    {/* Type 2 - Current Color (Red) */}
+                    <label className={`flex items-center p-4 border-2 rounded-lg cursor-pointer transition-all duration-200 hover:shadow-md ${
+                      localConfig?.backgroundTheme === 'type2' 
+                        ? 'border-red-500 bg-red-50' 
+                        : 'border-gray-200 hover:border-gray-300'
+                    }`}>
+                      <input
+                        type="radio"
+                        name="backgroundTheme"
+                        value="type2"
+                        checked={localConfig?.backgroundTheme === 'type2'}
+                        onChange={(e) => {
+                          console.log('Type 2 radio clicked:', e.target.value);
+                          updateConfigField('backgroundTheme', e.target.value);
+                        }}
+                        className="w-4 h-4 text-red-600 focus:ring-red-500"
+                      />
+                      <div className="ml-3 flex items-center">
+                        <div className="w-8 h-8 bg-gradient-to-br from-red-600/20 via-transparent to-red-800/20 rounded-lg mr-3 flex items-center justify-center">
+                          <span className="text-red-600 text-sm font-bold">2</span>
+                        </div>
+                        <div>
+                          <div className="text-sm sm:text-base font-medium text-gray-900">Type 2 (Red)</div>
+                          <div className="text-xs text-gray-500">Red color scheme with red gradients</div>
+                        </div>
+                      </div>
+                    </label>
+
+                    {/* Type 3 - Dark Red */}
+                    <label className={`flex items-center p-4 border-2 rounded-lg cursor-pointer transition-all duration-200 hover:shadow-md ${
+                      localConfig?.backgroundTheme === 'type3' 
+                        ? 'border-red-900 bg-red-50' 
+                        : 'border-gray-200 hover:border-gray-300'
+                    }`}>
+                      <input
+                        type="radio"
+                        name="backgroundTheme"
+                        value="type3"
+                        checked={localConfig?.backgroundTheme === 'type3'}
+                        onChange={(e) => {
+                          console.log('Type 3 radio clicked:', e.target.value);
+                          updateConfigField('backgroundTheme', e.target.value);
+                        }}
+                        className="w-4 h-4 text-red-900 focus:ring-red-900"
+                      />
+                      <div className="ml-3 flex items-center">
+                        <div className="w-8 h-8 bg-gradient-to-br from-red-900/30 via-transparent to-red-950/30 rounded-lg mr-3 flex items-center justify-center border border-red-900/20">
+                          <span className="text-red-900 text-sm font-bold">3</span>
+                        </div>
+                        <div>
+                          <div className="text-sm sm:text-base font-medium text-gray-900">Type 3 (Dark Red)</div>
+                          <div className="text-xs text-gray-500">Deep dark red color scheme with rich gradients</div>
+                        </div>
+                      </div>
+                    </label>
+
+                    {/* Type 4 - Maroon/Golden (MUKHTI Brand) */}
+                    <label className={`flex items-center p-4 border-2 rounded-lg cursor-pointer transition-all duration-200 hover:shadow-md ${
+                      localConfig?.backgroundTheme === 'type4' 
+                        ? 'border-amber-600 bg-amber-50' 
+                        : 'border-gray-200 hover:border-gray-300'
+                    }`}>
+                      <input
+                        type="radio"
+                        name="backgroundTheme"
+                        value="type4"
+                        checked={localConfig?.backgroundTheme === 'type4'}
+                        onChange={(e) => {
+                          console.log('Type 4 radio clicked:', e.target.value);
+                          updateConfigField('backgroundTheme', e.target.value);
+                        }}
+                        className="w-4 h-4 text-amber-600 focus:ring-amber-600"
+                      />
+                      <div className="ml-3 flex items-center">
+                        <div className="w-8 h-8 bg-gradient-to-br from-amber-600/30 via-transparent to-yellow-600/30 rounded-lg mr-3 flex items-center justify-center border border-amber-600/20">
+                          <span className="text-amber-700 text-sm font-bold">4</span>
+                        </div>
+                        <div>
+                          <div className="text-sm sm:text-base font-medium text-gray-900">Type 4 (Maroon/Golden)</div>
+                          <div className="text-xs text-gray-500">MUKHTI brand colors - Maroon background with golden accents</div>
+                        </div>
+                      </div>
+                    </label>
+                  </div>
+                </div>
+
                 {/* Live Preview */}
                 <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 sm:p-6">
                   <h3 className="text-base sm:text-lg font-semibold text-gray-900 mb-4">Live Preview</h3>

@@ -471,7 +471,7 @@ const Cart = () => {
     return (
       <div className="min-h-screen relative flex items-center justify-center">
         {/* Single Gradient Overlay for Entire Cart Page */}
-        <div className="absolute inset-0 bg-gradient-to-br from-blue-600/20 via-transparent to-purple-600/20 pointer-events-none"></div>
+        <div className="absolute inset-0 "></div>
         <div className="text-center relative z-10">
           <FaSpinner className="w-8 h-8 sm:w-12 sm:h-12 text-blue-600 animate-spin mx-auto mb-4" />
           <p className="text-sm sm:text-base text-gray-600">Loading your cart...</p>
@@ -484,7 +484,7 @@ const Cart = () => {
     return (
       <div className="min-h-screen relative flex items-center justify-center px-3 sm:px-4">
         {/* Single Gradient Overlay for Entire Cart Page */}
-        <div className="absolute inset-0 bg-gradient-to-br from-blue-600/20 via-transparent to-purple-600/20 pointer-events-none"></div>
+        <div className="absolute inset-0 "></div>
         <div className="max-w-sm w-full bg-white shadow-xl border border-gray-200 rounded-2xl p-6 sm:p-8 text-center relative z-10">
           <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-full flex items-center justify-center mx-auto mb-4 sm:mb-6 bg-gradient-to-r from-blue-600 to-purple-600">
             <FaShoppingCart className="w-8 h-8 sm:w-10 sm:h-10 text-white" />
@@ -506,7 +506,7 @@ const Cart = () => {
     return (
       <div className="min-h-screen relative flex items-center justify-center px-3 sm:px-4">
         {/* Single Gradient Overlay for Entire Cart Page */}
-        <div className="absolute inset-0 bg-gradient-to-br from-blue-600/20 via-transparent to-purple-600/20 pointer-events-none"></div>
+        <div className="absolute inset-0 "></div>
         <div className="max-w-sm w-full bg-white shadow-xl rounded-2xl p-6 sm:p-8 text-center relative z-10">
           <div className="w-16 h-16 sm:w-20 sm:h-20 bg-gradient-to-r from-gray-700 via-gray-800 to-black rounded-full flex items-center justify-center mx-auto mb-4 sm:mb-6 relative">
             <div className="absolute inset-0 bg-white rounded-full m-1"></div>
