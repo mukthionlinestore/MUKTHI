@@ -467,12 +467,12 @@ const Checkout = () => {
   const [shippingAddress, setShippingAddress] = useState({
     fullName: user?.name || '',
     email: user?.email || '',
-    phone: '',
-    street: '',
-    city: '',
-    state: '',
-    zipCode: '',
-    country: 'United States'
+    phone: user?.phone || '',
+    street: user?.address?.street || '',
+    city: user?.address?.city || '',
+    state: user?.address?.state || '',
+    zipCode: user?.address?.zipCode || '',
+    country: 'India'
   });
 
   const [paymentMethod, setPaymentMethod] = useState('');
@@ -490,7 +490,7 @@ const Checkout = () => {
     city: '',
     state: '',
     zipCode: '',
-    country: 'United States'
+    country: 'India'
   });
 
   useEffect(() => {
@@ -550,6 +550,23 @@ const Checkout = () => {
       setPaymentMethod('Credit Card');
     }
   }, [config?.paymentSettings?.paymentGatewayEnabled, config?.paymentSettings?.whatsappEnabled, config?.paymentSettings?.instagramEnabled]);
+
+  // Populate address from user profile when user data is available
+  useEffect(() => {
+    if (user) {
+      setShippingAddress(prev => ({
+        ...prev,
+        fullName: user.name || prev.fullName,
+        email: user.email || prev.email,
+        phone: user.phone || prev.phone,
+        street: user.address?.street || prev.street,
+        city: user.address?.city || prev.city,
+        state: user.address?.state || prev.state,
+        zipCode: user.address?.zipCode || prev.zipCode,
+        country: 'India' // Always set to India
+      }));
+    }
+  }, [user]);
 
   const fetchDirectBuyProduct = async (productId) => {
     try {
@@ -1093,9 +1110,7 @@ const Checkout = () => {
                         onChange={handleShippingChange}
                         className="w-full px-3 py-2 sm:py-2.5 text-xs sm:text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
                       >
-                        <option value="United States">United States</option>
-                        <option value="Canada">Canada</option>
-                        <option value="United Kingdom">United Kingdom</option>
+                        <option value="India">India</option>
                       </select>
                     </div>
 
