@@ -1192,6 +1192,62 @@ const SuperAdminDashboard = () => {
                         </div>
                       </div>
                     </label>
+
+                    {/* Type 5 - Deep Red/Charcoal (Flower Inspired) */}
+                    <label className={`flex items-center p-4 border-2 rounded-lg cursor-pointer transition-all duration-200 hover:shadow-md ${
+                      localConfig?.backgroundTheme === 'type5' 
+                        ? 'border-red-800 bg-red-50' 
+                        : 'border-gray-200 hover:border-gray-300'
+                    }`}>
+                      <input
+                        type="radio"
+                        name="backgroundTheme"
+                        value="type5"
+                        checked={localConfig?.backgroundTheme === 'type5'}
+                        onChange={(e) => {
+                          console.log('Type 5 radio clicked:', e.target.value);
+                          updateConfigField('backgroundTheme', e.target.value);
+                        }}
+                        className="w-4 h-4 text-red-800 focus:ring-red-800"
+                      />
+                      <div className="ml-3 flex items-center">
+                        <div className="w-8 h-8 bg-gradient-to-br from-red-800/30 via-transparent to-red-900/30 rounded-lg mr-3 flex items-center justify-center border border-red-800/20">
+                          <span className="text-red-800 text-sm font-bold">5</span>
+                        </div>
+                        <div>
+                          <div className="text-sm sm:text-base font-medium text-gray-900">Type 5 (Deep Red/Charcoal)</div>
+                          <div className="text-xs text-gray-500">Inspired by vibrant red flowers - Deep red (#A10C17) with dark charcoal (#2C2A1A)</div>
+                        </div>
+                      </div>
+                    </label>
+
+                    {/* Type 6 - Exact Flower Colors (Deep Red Background) */}
+                    <label className={`flex items-center p-4 border-2 rounded-lg cursor-pointer transition-all duration-200 hover:shadow-md ${
+                      localConfig?.backgroundTheme === 'type6' 
+                        ? 'border-red-700 bg-red-50' 
+                        : 'border-gray-200 hover:border-gray-300'
+                    }`}>
+                      <input
+                        type="radio"
+                        name="backgroundTheme"
+                        value="type6"
+                        checked={localConfig?.backgroundTheme === 'type6'}
+                        onChange={(e) => {
+                          console.log('Type 6 radio clicked:', e.target.value);
+                          updateConfigField('backgroundTheme', e.target.value);
+                        }}
+                        className="w-4 h-4 text-red-700 focus:ring-red-700"
+                      />
+                      <div className="ml-3 flex items-center">
+                        <div className="w-8 h-8 rounded-lg mr-3 flex items-center justify-center border border-red-700/20" style={{backgroundColor: '#A10C17'}}>
+                          <span className="text-white text-sm font-bold">6</span>
+                        </div>
+                        <div>
+                          <div className="text-sm sm:text-base font-medium text-gray-900">Type 6 (Exact Flower Image)</div>
+                          <div className="text-xs text-gray-500">Uses the exact flower image you provided as background with deep red base and black overlays</div>
+                        </div>
+                      </div>
+                    </label>
                   </div>
                 </div>
 

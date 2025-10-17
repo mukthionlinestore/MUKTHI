@@ -74,7 +74,9 @@ function DynamicBackground() {
     type1: 'bg-gradient-to-br from-blue-600/20 via-transparent to-purple-600/20',
     type2: 'bg-gradient-to-br from-red-600/20 via-transparent to-red-800/20',
     type3: 'bg-gradient-to-br from-red-900/20 via-transparent to-red-950/20',
-    type4: 'bg-gradient-to-br from-amber-600/20 via-transparent to-amber-800/20'
+    type4: 'bg-gradient-to-br from-amber-600/20 via-transparent to-amber-800/20',
+    type5: 'bg-gradient-to-br from-red-800/20 via-transparent to-red-900/20',
+    type6: 'bg-gradient-to-br from-black/30 via-transparent to-black/20'
   };
   
   // Define animated element colors for each theme
@@ -102,6 +104,18 @@ function DynamicBackground() {
       color2: 'bg-amber-700/10',
       color3: 'bg-yellow-600/10',
       color4: 'bg-yellow-700/10'
+    },
+    type5: {
+      color1: 'bg-red-700/10',
+      color2: 'bg-red-800/10',
+      color3: 'bg-orange-500/10',
+      color4: 'bg-orange-600/10'
+    },
+    type6: {
+      color1: 'bg-black/20',
+      color2: 'bg-black/25',
+      color3: 'bg-black/15',
+      color4: 'bg-black/18'
     }
   };
   
@@ -110,7 +124,27 @@ function DynamicBackground() {
   return (
     <>
       {/* Single Gradient Overlay for Entire Application */}
-      <div className={`absolute inset-0 pointer-events-none ${gradientClasses[theme] || gradientClasses.type1}`}></div>
+      <div className={`absolute inset-0 pointer-events-none ${
+        theme === 'type6' 
+          ? 'bg-gradient-to-br from-black/40 via-transparent to-black/30'
+          : gradientClasses[theme] || gradientClasses.type1
+      }`} style={theme === 'type6' ? {backgroundColor: '#A10C17'} : {}}></div>
+      
+      {/* Flower Image Background for Type 6 */}
+      {theme === 'type6' && (
+        <div 
+          className="absolute inset-0 pointer-events-none bg-cover bg-center bg-no-repeat"
+          style={{
+            backgroundImage: `url('/images/flower-background.jpg')`,
+            opacity: 0.4
+          }}
+        ></div>
+      )}
+      
+      {/* Additional black overlay for Type 6 to enhance contrast */}
+      {theme === 'type6' && (
+        <div className="absolute inset-0 bg-gradient-to-br from-black/20 via-transparent to-black/15 pointer-events-none"></div>
+      )}
       
       {/* Animated Background Elements */}
       <div className="absolute inset-0">
@@ -118,6 +152,15 @@ function DynamicBackground() {
         <div className={`absolute top-20 right-20 w-16 h-16 rounded-full animate-pulse animation-delay-1000 ${colors.color2}`}></div>
         <div className={`absolute bottom-10 left-1/4 w-20 h-20 rounded-full animate-pulse animation-delay-2000 ${colors.color3}`}></div>
         <div className={`absolute bottom-20 right-1/3 w-12 h-12 rounded-full animate-pulse animation-delay-3000 ${colors.color4}`}></div>
+        
+        {/* Additional black elements for Type 6 */}
+        {theme === 'type6' && (
+          <>
+            <div className="absolute top-1/3 right-1/3 w-8 h-8 bg-black/20 rounded-full animate-pulse animation-delay-500"></div>
+            <div className="absolute bottom-1/3 left-1/3 w-6 h-6 bg-black/25 rounded-full animate-pulse animation-delay-1500"></div>
+            <div className="absolute top-2/3 left-1/2 w-10 h-10 bg-black/15 rounded-full animate-pulse animation-delay-2500"></div>
+          </>
+        )}
       </div>
     </>
   );
