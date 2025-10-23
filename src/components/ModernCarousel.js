@@ -10,18 +10,28 @@ import {
   FaLeaf,
   FaFire
 } from 'react-icons/fa';
+import { useHomePageSettings } from '../context/HomePageSettingsContext';
 
 const ModernCarousel = () => {
   const [currentSlide, setCurrentSlide] = useState(0);
+  const { homePageSettings, loading } = useHomePageSettings();
 
-  // Carousel data with different content for each slide
+  // Get dynamic text from context or use defaults
+  const getSlideData = (screenNumber) => {
+    const screen = homePageSettings?.heroSection?.[`screen${screenNumber}`];
+    return {
+      title: screen?.title || `Screen ${screenNumber} Title`,
+      subtitle: screen?.subtitle || `Screen ${screenNumber} Subtitle`,
+      description: screen?.description || `Screen ${screenNumber} Description`
+    };
+  };
+
+  // Carousel data with different content for each slide - now using dynamic text
   const slides = [
     {
       id: 1,
       image: 'https://images.unsplash.com/photo-1441986300917-64674bd600d8?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80',
-      title: 'Amazing Variety Of Products',
-      subtitle: 'Starting Just $6',
-      description: 'Discover our premium collection of products designed to enhance your lifestyle',
+      ...getSlideData(1),
       badge: 'Best Quality Products',
       badgeIcon: FaLeaf,
       buttonText: 'Shop Now',
@@ -33,9 +43,7 @@ const ModernCarousel = () => {
     {
       id: 2,
       image: 'https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80',
-      title: 'New Collection 2024',
-      subtitle: 'Limited Time Offer',
-      description: 'Explore our latest arrivals with exclusive designs and premium materials',
+      ...getSlideData(2),
       badge: 'New Arrivals',
       badgeIcon: FaFire,
       buttonText: 'Explore Collection',
@@ -47,9 +55,7 @@ const ModernCarousel = () => {
     {
       id: 3,
       image: 'https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80',
-      title: 'Premium Quality',
-      subtitle: 'Free Shipping Worldwide',
-      description: 'Experience luxury shopping with our curated selection of high-end products',
+      ...getSlideData(3),
       badge: 'Free Shipping',
       badgeIcon: FaTruck,
       buttonText: 'Start Shopping',
@@ -61,9 +67,7 @@ const ModernCarousel = () => {
     {
       id: 4,
       image: 'https://images.unsplash.com/photo-1441986300917-64674bd600d8?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80',
-      title: 'Special Offers',
-      subtitle: 'Up to 50% Off',
-      description: 'Don\'t miss out on our exclusive deals and limited-time promotions',
+      ...getSlideData(4),
       badge: 'Special Deals',
       badgeIcon: FaGift,
       buttonText: 'View Offers',
@@ -75,9 +79,7 @@ const ModernCarousel = () => {
     {
       id: 5,
       image: 'https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80',
-      title: 'Customer Favorites',
-      subtitle: 'Top Rated Products',
-      description: 'Shop our most loved items based on customer reviews and ratings',
+      ...getSlideData(5),
       badge: 'Top Rated',
       badgeIcon: FaStar,
       buttonText: 'See Favorites',
@@ -109,8 +111,19 @@ const ModernCarousel = () => {
 
   return (
     <div className="relative h-[30vh] sm:h-[48vh] md:h-[60vh] lg:h-[72vh] xl:h-[84vh] overflow-hidden group">
+      {/* Loading State */}
+      {loading && (
+        <div className="flex items-center justify-center h-full bg-gray-100">
+          <div className="text-center">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
+            <p className="text-gray-600">Loading carousel...</p>
+          </div>
+        </div>
+      )}
+
       {/* Carousel Container */}
-      <div className="relative w-full h-full">
+      {!loading && (
+        <div className="relative w-full h-full">
         <div 
           className="flex transition-transform duration-1000 ease-in-out h-full"
           style={{ transform: `translateX(-${currentSlide * 100}%)` }}
@@ -191,23 +204,26 @@ const ModernCarousel = () => {
           ))}
         </div>
       </div>
+      )}
 
 
       {/* Dots Navigation */}
-      <div className="absolute bottom-2 sm:bottom-4 left-1/2 -translate-x-1/2 flex gap-1.5 sm:gap-2 md:gap-3 bg-black/20 backdrop-blur-md px-2 sm:px-3 md:px-4 py-1 sm:py-1.5 md:py-2 rounded-full border border-white/30 shadow-lg">
-        {slides.map((_, index) => (
-          <button
-            key={index}
-            onClick={() => goToSlide(index)}
-            className={`w-2.5 h-2.5 sm:w-3 sm:h-3 md:w-4 md:h-4 rounded-full transition-all duration-300 ${
-              index === currentSlide
-                ? 'bg-white scale-125 shadow-lg ring-2 ring-white/50'
-                : 'bg-white/60 hover:bg-white/80 hover:scale-110 shadow-md'
-            }`}
-            aria-label={`Go to slide ${index + 1}`}
-          />
-        ))}
-      </div>
+      {!loading && (
+        <div className="absolute bottom-2 sm:bottom-4 left-1/2 -translate-x-1/2 flex gap-1.5 sm:gap-2 md:gap-3 bg-black/20 backdrop-blur-md px-2 sm:px-3 md:px-4 py-1 sm:py-1.5 md:py-2 rounded-full border border-white/30 shadow-lg">
+          {slides.map((_, index) => (
+            <button
+              key={index}
+              onClick={() => goToSlide(index)}
+              className={`w-2.5 h-2.5 sm:w-3 sm:h-3 md:w-4 md:h-4 rounded-full transition-all duration-300 ${
+                index === currentSlide
+                  ? 'bg-white scale-125 shadow-lg ring-2 ring-white/50'
+                  : 'bg-white/60 hover:bg-white/80 hover:scale-110 shadow-md'
+              }`}
+              aria-label={`Go to slide ${index + 1}`}
+            />
+          ))}
+        </div>
+      )}
     </div>
   );
 };

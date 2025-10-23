@@ -131,6 +131,7 @@ app.use('/api/admin', require('./routes/admin'));
 app.use('/api/superadmin', require('./routes/superAdmin'));
 app.use('/api/upload', require('./routes/upload'));
 app.use('/api/notifications', require('./routes/notifications'));
+app.use('/api/homepage', require('./routes/homePageSettings'));
 
 // Error handling middleware
 app.use((err, req, res, next) => {

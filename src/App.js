@@ -59,6 +59,7 @@ import AdminFooter from './pages/admin/AdminFooter';
 import AdminNotifications from './pages/admin/AdminNotifications';
 import ManageCategories from './pages/admin/ManageCategories';
 import ManageBrands from './pages/admin/ManageBrands';
+import AdminHomePage from './pages/admin/AdminHomePage';
 
 // Super Admin Pages
 import SuperAdminDashboard from './pages/SuperAdminDashboard';
@@ -253,6 +254,7 @@ function App() {
                             </AdminRoute>
                           }>
                             <Route index element={<AdminDashboard />} />
+                            <Route path="homepage" element={<AdminHomePage />} />
                             <Route path="products" element={<AdminProducts />} />
                             <Route path="products/add" element={<AddProduct />} />
                             <Route path="products/edit/:id" element={<EditProduct />} />

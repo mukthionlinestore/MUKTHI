@@ -16,7 +16,8 @@ import {
   FaChartLine,
   FaClipboardList,
   FaBuilding,
-  FaBell
+  FaBell,
+  FaDesktop
 } from 'react-icons/fa';
 
 const AdminLayout = () => {
@@ -27,6 +28,7 @@ const AdminLayout = () => {
 
   const navigation = [
     { name: 'Dashboard', href: '/admin', icon: FaHome },
+    { name: 'Home Page', href: '/admin/homepage', icon: FaDesktop },
     { name: 'Products', href: '/admin/products', icon: FaBox },
     { name: 'Orders', href: '/admin/orders', icon: FaShoppingCart },
     { name: 'Users', href: '/admin/users', icon: FaUsers },

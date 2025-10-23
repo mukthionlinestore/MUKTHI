@@ -34,7 +34,7 @@ const Home = () => {
   const [newArrivals, setNewArrivals] = useState([]);
   const [featuredProducts, setFeaturedProducts] = useState([]);
   const [loading, setLoading] = useState(true);
-  const { getSortedSections, loading: settingsLoading } = useHomePageSettings();
+  const { getSortedSections, loading: settingsLoading, homePageSettings } = useHomePageSettings();
 
   // Dynamic section renderer based on admin settings
   const renderSection = (sectionId) => {
@@ -661,14 +661,15 @@ const Home = () => {
                   <div className="text-center mb-8 sm:mb-12">
                     <div className="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-green-100 to-blue-100 rounded-full mb-4">
                       <div className="w-2 h-2 bg-gradient-to-r from-green-500 to-blue-500 rounded-full animate-pulse"></div>
-                      <span className="text-sm font-semibold text-gray-700">Ready to Shop?</span>
+                      <span className="text-sm font-semibold text-gray-700">
+                        {homePageSettings?.finalCTA?.badge || 'Ready to Shop?'}
+                      </span>
                     </div>
                     <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-900 mb-4">
-                      Start Your
-                      <span className="bg-gradient-to-r from-green-600 to-blue-600 bg-clip-text text-transparent"> Shopping Journey</span>
+                      {homePageSettings?.finalCTA?.title || 'Start Your Shopping Journey'}
                     </h2>
                     <p className="text-gray-600 max-w-2xl mx-auto text-sm sm:text-base">
-                      Discover amazing products and enjoy a seamless shopping experience with us.
+                      {homePageSettings?.finalCTA?.subtitle || 'Discover amazing products and enjoy a seamless shopping experience with us.'}
                     </p>
                   </div>
                 </ScrollAnimation>
@@ -676,29 +677,45 @@ const Home = () => {
                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 sm:gap-6 lg:gap-8">
                   <ScrollAnimation direction="up" delay={100}>
                     <div className="bg-white rounded-xl sm:rounded-2xl p-4 sm:p-5 text-center border border-gray-200 hover:bg-gray-50 transition-all duration-500 transform hover:-translate-y-1 hover:scale-105 mobile-touch-feedback shadow-sm hover:shadow-md">
-                      <div className="text-2xl sm:text-3xl font-bold text-green-600 mb-2">10K+</div>
-                      <div className="text-gray-500 font-semibold text-xs sm:text-sm">Happy Customers</div>
+                      <div className="text-2xl sm:text-3xl font-bold text-green-600 mb-2">
+                        {homePageSettings?.finalCTA?.stats?.customers?.number || '10K+'}
+                      </div>
+                      <div className="text-gray-500 font-semibold text-xs sm:text-sm">
+                        {homePageSettings?.finalCTA?.stats?.customers?.label || 'Happy Customers'}
+                      </div>
                     </div>
                   </ScrollAnimation>
 
                   <ScrollAnimation direction="up" delay={200}>
                     <div className="bg-white rounded-xl sm:rounded-2xl p-4 sm:p-5 text-center border border-gray-200 hover:bg-gray-50 transition-all duration-500 transform hover:-translate-y-1 hover:scale-105 mobile-touch-feedback shadow-sm hover:shadow-md">
-                      <div className="text-2xl sm:text-3xl font-bold text-blue-600 mb-2">500+</div>
-                      <div className="text-gray-500 font-semibold text-xs sm:text-sm">Products</div>
+                      <div className="text-2xl sm:text-3xl font-bold text-blue-600 mb-2">
+                        {homePageSettings?.finalCTA?.stats?.products?.number || '500+'}
+                      </div>
+                      <div className="text-gray-500 font-semibold text-xs sm:text-sm">
+                        {homePageSettings?.finalCTA?.stats?.products?.label || 'Products'}
+                      </div>
                     </div>
                   </ScrollAnimation>
 
                   <ScrollAnimation direction="up" delay={300}>
                     <div className="bg-white rounded-xl sm:rounded-2xl p-4 sm:p-5 text-center border border-gray-200 hover:bg-gray-50 transition-all duration-500 transform hover:-translate-y-1 hover:scale-105 mobile-touch-feedback shadow-sm hover:shadow-md">
-                      <div className="text-2xl sm:text-3xl font-bold text-purple-600 mb-2">50+</div>
-                      <div className="text-gray-500 font-semibold text-xs sm:text-sm">Countries</div>
+                      <div className="text-2xl sm:text-3xl font-bold text-purple-600 mb-2">
+                        {homePageSettings?.finalCTA?.stats?.countries?.number || '50+'}
+                      </div>
+                      <div className="text-gray-500 font-semibold text-xs sm:text-sm">
+                        {homePageSettings?.finalCTA?.stats?.countries?.label || 'Countries'}
+                      </div>
                     </div>
                   </ScrollAnimation>
 
                   <ScrollAnimation direction="up" delay={400}>
                     <div className="bg-white rounded-xl sm:rounded-2xl p-4 sm:p-5 text-center border border-gray-200 hover:bg-gray-50 transition-all duration-500 transform hover:-translate-y-1 hover:scale-105 mobile-touch-feedback shadow-sm hover:shadow-md">
-                      <div className="text-2xl sm:text-3xl font-bold text-pink-600 mb-2">99%</div>
-                      <div className="text-gray-500 font-semibold text-xs sm:text-sm">Satisfaction</div>
+                      <div className="text-2xl sm:text-3xl font-bold text-pink-600 mb-2">
+                        {homePageSettings?.finalCTA?.stats?.satisfaction?.number || '99%'}
+                      </div>
+                      <div className="text-gray-500 font-semibold text-xs sm:text-sm">
+                        {homePageSettings?.finalCTA?.stats?.satisfaction?.label || 'Satisfaction'}
+                      </div>
                     </div>
                   </ScrollAnimation>
                 </div>
@@ -706,10 +723,10 @@ const Home = () => {
                 <ScrollAnimation direction="up" delay={500}>
                   <div className="text-center mt-8 sm:mt-12">
                     <Link
-                      to="/products"
+                      to={homePageSettings?.finalCTA?.buttonLink || '/products'}
                       className="inline-flex items-center gap-2 px-8 py-4 bg-gradient-to-r from-green-600 to-blue-600 text-white font-bold rounded-2xl hover:from-green-700 hover:to-blue-700 transition-all duration-300 transform hover:scale-105 shadow-xl hover:shadow-2xl"
                     >
-                      <span>Start Shopping Now</span>
+                      <span>{homePageSettings?.finalCTA?.buttonText || 'Start Shopping Now'}</span>
                       <FaArrowRight className="w-4 h-4 sm:w-5 sm:h-5 group-hover:translate-x-2 transition-transform duration-300" />
                     </Link>
                   </div>
