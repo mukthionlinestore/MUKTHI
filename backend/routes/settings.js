@@ -11,7 +11,8 @@ router.get('/', async (req, res) => {
       taxPercentage: settings.taxPercentage,
       currency: settings.currency,
       currencySymbol: settings.currencySymbol,
-      freeShippingThreshold: settings.freeShippingThreshold
+      freeShippingThreshold: settings.freeShippingThreshold,
+      sizeChart: settings.sizeChart
     });
   } catch (error) {
     console.error('Error fetching settings:', error);
@@ -27,7 +28,8 @@ router.get('/admin', adminAuth, async (req, res) => {
       taxPercentage: settings.taxPercentage,
       currency: settings.currency,
       currencySymbol: settings.currencySymbol,
-      freeShippingThreshold: settings.freeShippingThreshold
+      freeShippingThreshold: settings.freeShippingThreshold,
+      sizeChart: settings.sizeChart
     });
   } catch (error) {
     console.error('Error fetching admin settings:', error);
@@ -38,7 +40,9 @@ router.get('/admin', adminAuth, async (req, res) => {
 // PUT /api/admin/settings - Admin route to update settings
 router.put('/admin', adminAuth, async (req, res) => {
   try {
-    const { taxPercentage, currency, currencySymbol, freeShippingThreshold } = req.body;
+    const { taxPercentage, currency, currencySymbol, freeShippingThreshold, sizeChart } = req.body;
+
+    console.log('Received settings update:', { taxPercentage, currency, currencySymbol, freeShippingThreshold, sizeChart });
 
     // Validate input
     if (taxPercentage < 0 || taxPercentage > 100) {
@@ -62,13 +66,24 @@ router.put('/admin', adminAuth, async (req, res) => {
     settings.currencySymbol = currencySymbol;
     settings.freeShippingThreshold = freeShippingThreshold;
     
+    // Update size chart if provided
+    if (sizeChart) {
+      console.log('Updating size chart:', sizeChart);
+      settings.sizeChart = {
+        ...settings.sizeChart,
+        ...sizeChart
+      };
+      settings.markModified('sizeChart');
+    }
+    
     await settings.save();
 
     res.json({
       taxPercentage: settings.taxPercentage,
       currency: settings.currency,
       currencySymbol: settings.currencySymbol,
-      freeShippingThreshold: settings.freeShippingThreshold
+      freeShippingThreshold: settings.freeShippingThreshold,
+      sizeChart: settings.sizeChart
     });
   } catch (error) {
     console.error('Error updating settings:', error);

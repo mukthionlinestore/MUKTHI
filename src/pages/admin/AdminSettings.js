@@ -12,7 +12,11 @@ import {
   FaYenSign,
   FaRupeeSign,
   FaShieldAlt,
-  FaInfoCircle
+  FaInfoCircle,
+  FaImage,
+  FaUpload,
+  FaEye,
+  FaTimes
 } from 'react-icons/fa';
 import axios from '../../config/axios';
 import { toast } from 'react-toastify';
@@ -22,11 +26,19 @@ const AdminSettings = () => {
     taxPercentage: 0,
     currency: 'USD',
     currencySymbol: '$',
-    freeShippingThreshold: 50
+    freeShippingThreshold: 50,
+    sizeChart: {
+      enabled: false,
+      imageUrl: '',
+      title: 'Size Chart',
+      description: 'Please refer to the size chart below to find your perfect fit.'
+    }
   });
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [hasChanges, setHasChanges] = useState(false);
+  const [uploadingImage, setUploadingImage] = useState(false);
+  const [showImagePreview, setShowImagePreview] = useState(false);
 
   const currencyOptions = [
     { code: 'USD', symbol: '$', name: 'US Dollar' },
@@ -57,9 +69,63 @@ const AdminSettings = () => {
   };
 
   const handleInputChange = (field, value) => {
-    const newSettings = { ...settings, [field]: value };
+    const keys = field.split('.');
+    const newSettings = { ...settings };
+    let current = newSettings;
+    
+    for (let i = 0; i < keys.length - 1; i++) {
+      if (!current[keys[i]]) {
+        current[keys[i]] = {};
+      }
+      current = current[keys[i]];
+    }
+    
+    current[keys[keys.length - 1]] = value;
+    
     setSettings(newSettings);
     setHasChanges(true);
+  };
+
+  const handleImageUpload = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    // Validate file size (max 5MB)
+    if (file.size > 5 * 1024 * 1024) {
+      toast.error('Image size must be less than 5MB');
+      return;
+    }
+
+    // Validate file type
+    if (!file.type.startsWith('image/')) {
+      toast.error('Please upload a valid image file');
+      return;
+    }
+
+    setUploadingImage(true);
+    try {
+      const formData = new FormData();
+      formData.append('image', file);
+      formData.append('folder', 'size-charts');
+
+      const response = await axios.post('/api/upload/size-chart', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data'
+        }
+      });
+
+      if (response.data.success) {
+        handleInputChange('sizeChart.imageUrl', response.data.url);
+        toast.success('Image uploaded successfully!');
+      } else {
+        toast.error('Failed to upload image');
+      }
+    } catch (error) {
+      console.error('Error uploading image:', error);
+      toast.error('Failed to upload image');
+    } finally {
+      setUploadingImage(false);
+    }
   };
 
   const handleCurrencyChange = (currencyCode) => {
@@ -350,6 +416,133 @@ const AdminSettings = () => {
           </div>
         )}
 
+        {/* Size Chart Settings */}
+        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 sm:p-6 mt-6">
+          <div className="flex items-center gap-2 sm:gap-3 mb-4 sm:mb-6">
+            <div className="w-8 h-8 sm:w-10 sm:h-10 bg-gradient-to-r from-purple-500 to-pink-500 rounded-lg flex items-center justify-center">
+              <FaImage className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
+            </div>
+            <div>
+              <h2 className="text-lg sm:text-xl font-bold text-gray-900">Size Chart</h2>
+              <p className="text-xs sm:text-sm text-gray-600">Manage size chart image and settings</p>
+            </div>
+          </div>
+
+          <div className="space-y-6">
+            {/* Enable Size Chart Toggle */}
+            <div className="flex items-center justify-between">
+              <div>
+                <label className="text-sm font-medium text-gray-700">Enable Size Chart</label>
+                <p className="text-xs text-gray-500">Show size chart on product pages</p>
+              </div>
+              <button
+                onClick={() => {
+                  handleInputChange('sizeChart.enabled', !settings.sizeChart?.enabled);
+                }}
+                className={`relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 ${
+                  settings.sizeChart?.enabled ? 'bg-blue-600' : 'bg-gray-300'
+                }`}
+              >
+                <span
+                  className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out ${
+                    settings.sizeChart?.enabled ? 'translate-x-5' : 'translate-x-0'
+                  }`}
+                />
+              </button>
+            </div>
+
+            {settings.sizeChart?.enabled && (
+              <div className="space-y-4 border-t pt-6">
+                {/* Title */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Size Chart Title
+                  </label>
+                  <input
+                    type="text"
+                    value={settings.sizeChart?.title || ''}
+                    onChange={(e) => handleInputChange('sizeChart.title', e.target.value)}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors duration-200"
+                    placeholder="Enter title (e.g., Size Chart)"
+                  />
+                </div>
+
+                {/* Description */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Description
+                  </label>
+                  <textarea
+                    value={settings.sizeChart?.description || ''}
+                    onChange={(e) => handleInputChange('sizeChart.description', e.target.value)}
+                    rows={3}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors duration-200"
+                    placeholder="Enter description"
+                  />
+                </div>
+
+                {/* Image Upload */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Size Chart Image
+                  </label>
+                  <div className="space-y-3">
+                    {settings.sizeChart?.imageUrl && (
+                      <div className="relative group">
+                      <img 
+                        src={settings.sizeChart.imageUrl} 
+                        alt="Size Chart" 
+                        className="w-full h-auto border border-gray-300 rounded-lg cursor-pointer hover:opacity-90 transition-opacity"
+                        onClick={() => setShowImagePreview(true)}
+                      />
+                      <button
+                        onClick={() => handleInputChange('sizeChart.imageUrl', '')}
+                        className="absolute top-2 right-2 p-2 bg-red-500 text-white rounded-full hover:bg-red-600 transition-colors opacity-0 group-hover:opacity-100"
+                      >
+                        <FaTimes className="w-4 h-4" />
+                      </button>
+                      </div>
+                    )}
+                    
+                    {!settings.sizeChart?.imageUrl && (
+                      <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center">
+                        <FaImage className="w-12 h-12 text-gray-400 mx-auto mb-3" />
+                        <p className="text-sm text-gray-600 mb-3">
+                          Upload size chart image (JPG, PNG, max 5MB)
+                        </p>
+                        <input
+                          type="file"
+                          accept="image/*"
+                          onChange={handleImageUpload}
+                          disabled={uploadingImage}
+                          className="hidden"
+                          id="sizeChartImage"
+                        />
+                        <label
+                          htmlFor="sizeChartImage"
+                          className="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors cursor-pointer disabled:opacity-50"
+                        >
+                          {uploadingImage ? (
+                            <>
+                              <FaSpinner className="w-4 h-4 animate-spin" />
+                              Uploading...
+                            </>
+                          ) : (
+                            <>
+                              <FaUpload className="w-4 h-4" />
+                              Upload Image
+                            </>
+                          )}
+                        </label>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+
         {!hasChanges && !loading && (
           <div className="mt-6 p-4 bg-emerald-50 rounded-lg border border-emerald-200">
             <div className="flex items-center gap-2">
@@ -361,6 +554,30 @@ const AdminSettings = () => {
           </div>
         )}
       </div>
+
+      {/* Image Preview Modal */}
+      {showImagePreview && settings.sizeChart?.imageUrl && (
+        <div className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-lg max-w-5xl w-full max-h-screen overflow-auto relative">
+            <div className="sticky top-0 bg-white border-b border-gray-200 p-4 flex items-center justify-between">
+              <h3 className="text-lg font-semibold text-gray-900">Size Chart Preview</h3>
+              <button
+                onClick={() => setShowImagePreview(false)}
+                className="p-2 hover:bg-gray-100 rounded-full transition-colors"
+              >
+                <FaTimes className="w-5 h-5 text-gray-500" />
+              </button>
+            </div>
+            <div className="p-4">
+              <img 
+                src={settings.sizeChart.imageUrl} 
+                alt="Size Chart" 
+                className="w-full h-auto"
+              />
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

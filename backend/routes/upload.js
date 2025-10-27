@@ -331,4 +331,65 @@ router.post('/logo', superAdminAuth, async (req, res) => {
   }
 });
 
+// Upload size chart (Admin only)
+router.post('/size-chart', adminAuth, async (req, res) => {
+  console.log('🚀 ===== SIZE CHART UPLOAD START =====');
+  
+  try {
+    console.log('🔐 Authentication passed - Admin verified');
+    
+    if (!req.files) {
+      console.log('❌ req.files is undefined');
+      return res.status(400).json({ message: 'No files in request' });
+    }
+    
+    if (!req.files.image) {
+      console.log('❌ req.files.image is undefined');
+      return res.status(400).json({ message: 'No image file found' });
+    }
+
+    const file = req.files.image;
+    console.log('📄 File details:', {
+      name: file.name,
+      size: file.size,
+      mimetype: file.mimetype
+    });
+    
+    // Validate file type
+    if (!file.mimetype || !file.mimetype.startsWith('image/')) {
+      return res.status(400).json({ message: 'Only image files are allowed' });
+    }
+    
+    // Validate file size (5MB limit)
+    if (file.size > 5 * 1024 * 1024) {
+      return res.status(400).json({ message: 'File size must be less than 5MB' });
+    }
+    
+    // Read file data
+    const fileData = file.data;
+    const base64String = `data:${file.mimetype};base64,${fileData.toString('base64')}`;
+    
+    // Upload to Cloudinary
+    console.log('☁️ Uploading to Cloudinary...');
+    const result = await uploadBase64Image(base64String, 'size-charts');
+    
+    console.log('✅ Upload successful:', result.url);
+    
+    res.json({
+      success: true,
+      message: 'Size chart uploaded successfully',
+      url: result.url,
+      publicId: result.publicId
+    });
+    
+  } catch (error) {
+    console.error('❌ Size chart upload error:', error);
+    res.status(500).json({ 
+      success: false,
+      message: 'Error uploading size chart',
+      error: process.env.NODE_ENV === 'development' ? error.message : 'Internal server error'
+    });
+  }
+});
+
 module.exports = router;

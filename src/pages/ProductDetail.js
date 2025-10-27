@@ -6,6 +6,7 @@ import { useAuth } from "../context/AuthContext";
 import { useSettings } from "../context/SettingsContext";
 import axios from "../config/axios";
 import SizeColorModal from "../components/products/SizeColorModal";
+import SizeChartModal from "../components/SizeChartModal";
 import ProductCard from "../components/products/ProductCard";
 import { 
   FaArrowLeft, 
@@ -27,7 +28,8 @@ import {
   FaChevronRight,
   FaHome,
   FaFolder,
-  FaCreditCard
+  FaCreditCard,
+  FaRuler
 } from "react-icons/fa";
 
 const StarRating = ({ rating = 0, size = "sm" }) => {
@@ -102,7 +104,7 @@ export default function ProductDetail() {
   const { user } = useAuth();
   const { addToCart } = useCart();
   const { addToWishlist, removeFromWishlist, isInWishlist } = useWishlist();
-  const { formatPrice } = useSettings();
+  const { formatPrice, settings } = useSettings();
 
   const [product, setProduct] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -119,6 +121,7 @@ export default function ProductDetail() {
   const [isWishlistLoading, setIsWishlistLoading] = useState(false);
   const [selectedColor, setSelectedColor] = useState(null);
   const [selectedSize, setSelectedSize] = useState(null);
+  const [showSizeChart, setShowSizeChart] = useState(false);
 
   const showToast = (msg, tone = "info") => {
     setToast({ msg, tone });
@@ -623,7 +626,17 @@ export default function ProductDetail() {
             {/* Sizes */}
             {product.sizes && product.sizes.length > 0 && (
               <div className="space-y-1">
-                <span className="text-xs font-medium text-gray-700">Sizes:</span>
+                <div className="flex items-center justify-between">
+                  <span className="text-xs font-medium text-gray-700">Sizes:</span>
+                  {/* Debug: Always show size chart button for testing */}
+                  <button
+                    onClick={() => setShowSizeChart(true)}
+                    className="flex items-center gap-1 text-xs text-emerald-600 hover:text-emerald-700 transition-colors border border-emerald-600 px-2 py-1 rounded"
+                  >
+                    <FaRuler className="w-3 h-3" />
+                    <span>Size Chart</span>
+                  </button>
+                </div>
                 <div className="flex gap-2">
                   {product.sizes.map((size, index) => (
                     <button
@@ -805,16 +818,23 @@ export default function ProductDetail() {
       )}
 
       {/* Size Color Modal */}
-              <SizeColorModal
-          isOpen={showSizeColorModal}
-          onClose={() => setShowSizeColorModal(false)}
-          onConfirm={handleModalConfirm}
-          product={product}
-          quantity={qty}
-          actionType={modalAction}
+      <SizeColorModal
+        isOpen={showSizeColorModal}
+        onClose={() => setShowSizeColorModal(false)}
+        onConfirm={handleModalConfirm}
+        product={product}
+        quantity={qty}
+        actionType={modalAction}
         preSelectedColor={selectedColor}
         preSelectedSize={selectedSize}
-        />
+      />
+
+      {/* Size Chart Modal */}
+      <SizeChartModal
+        isOpen={showSizeChart}
+        onClose={() => setShowSizeChart(false)}
+        sizeChart={settings?.sizeChart}
+      />
     </div>
   );
 }

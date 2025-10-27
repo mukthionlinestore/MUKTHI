@@ -20,6 +20,24 @@ const settingsSchema = new mongoose.Schema({
     type: Number,
     default: 50,
     min: 0
+  },
+  sizeChart: {
+    enabled: {
+      type: Boolean,
+      default: false
+    },
+    imageUrl: {
+      type: String,
+      default: ''
+    },
+    title: {
+      type: String,
+      default: 'Size Chart'
+    },
+    description: {
+      type: String,
+      default: 'Please refer to the size chart below to find your perfect fit.'
+    }
   }
 }, {
   timestamps: true
@@ -33,7 +51,13 @@ settingsSchema.statics.getInstance = async function() {
       taxPercentage: 0,
       currency: 'USD',
       currencySymbol: '$',
-      freeShippingThreshold: 50
+      freeShippingThreshold: 50,
+      sizeChart: {
+        enabled: false,
+        imageUrl: '',
+        title: 'Size Chart',
+        description: 'Please refer to the size chart below to find your perfect fit.'
+      }
     });
   }
   return settings;
