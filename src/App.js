@@ -77,7 +77,8 @@ function DynamicBackground() {
     type3: 'bg-gradient-to-br from-red-900/20 via-transparent to-red-950/20',
     type4: 'bg-gradient-to-br from-amber-600/20 via-transparent to-amber-800/20',
     type5: 'bg-gradient-to-br from-red-800/20 via-transparent to-red-900/20',
-    type6: 'bg-gradient-to-br from-black/30 via-transparent to-black/20'
+    type6: 'bg-gradient-to-br from-black/30 via-transparent to-black/20',
+    type7: ''
   };
   
   // Define animated element colors for each theme
@@ -142,6 +143,14 @@ function DynamicBackground() {
         ></div>
       )}
       
+      {/* Background Image for Type 7 */}
+      {theme === 'type7' && config?.backgroundImageUrl && (
+        <div
+          className="absolute inset-0 pointer-events-none bg-no-repeat bg-center bg-cover"
+          style={{ backgroundImage: `url('${config.backgroundImageUrl}')` }}
+        ></div>
+      )}
+
       {/* Additional black overlay for Type 6 to enhance contrast */}
       {theme === 'type6' && (
         <div className="absolute inset-0 bg-gradient-to-br from-black/20 via-transparent to-black/15 pointer-events-none"></div>

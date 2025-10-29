@@ -393,3 +393,26 @@ router.post('/size-chart', adminAuth, async (req, res) => {
 });
 
 module.exports = router;
+// Upload theme background for type7 (Super Admin only)
+router.post('/theme-background', superAdminAuth, async (req, res) => {
+  try {
+    if (!req.files || !req.files.image) {
+      return res.status(400).json({ success: false, message: 'No image file provided' });
+    }
+
+    const file = req.files.image;
+    if (!file.mimetype || !file.mimetype.startsWith('image/')) {
+      return res.status(400).json({ success: false, message: 'Only image files are allowed' });
+    }
+    if (file.size > 8 * 1024 * 1024) {
+      return res.status(400).json({ success: false, message: 'File size must be less than 8MB' });
+    }
+
+    const base64String = `data:${file.mimetype};base64,${file.data.toString('base64')}`;
+    const result = await uploadBase64Image(base64String, 'theme-backgrounds');
+    res.json({ success: true, url: result.url, publicId: result.publicId });
+  } catch (error) {
+    console.error('Theme background upload error:', error);
+    res.status(500).json({ success: false, message: 'Failed to upload background image' });
+  }
+});

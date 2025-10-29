@@ -350,12 +350,17 @@ const websiteConfigSchema = new mongoose.Schema({
     default: 'We are currently performing maintenance. Please check back later.'
   },
   
-  // Background Theme Selection
-  backgroundTheme: {
-    type: String,
-    enum: ['type1', 'type2', 'type3', 'type4', 'type5', 'type6'],
-    default: 'type1'
-  },
+    // Background Theme Selection
+    backgroundTheme: {
+      type: String,
+      enum: ['type1', 'type2', 'type3', 'type4', 'type5', 'type6', 'type7'],
+      default: 'type1'
+    },
+    // Optional background image for theme type7
+    backgroundImageUrl: {
+      type: String,
+      default: ''
+    },
   
   // Analytics
   googleAnalyticsId: {

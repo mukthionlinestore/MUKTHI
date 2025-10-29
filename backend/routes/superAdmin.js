@@ -111,7 +111,8 @@ router.get('/public-config', async (req, res) => {
             instagramUsername: config.paymentSettings?.instagramUsername || ''
           },
           // Include background theme for dynamic styling
-          backgroundTheme: config.backgroundTheme || 'type1'
+    backgroundTheme: config.backgroundTheme || 'type1',
+    backgroundImageUrl: config.backgroundImageUrl || ''
     };
     res.json(publicConfig);
   } catch (error) {

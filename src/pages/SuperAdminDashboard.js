@@ -1248,6 +1248,79 @@ const SuperAdminDashboard = () => {
                         </div>
                       </div>
                     </label>
+
+                    {/* Type 7 - Custom Background Image */}
+                    <label className={`flex items-start gap-3 p-4 border-2 rounded-lg cursor-pointer transition-all duration-200 hover:shadow-md ${
+                      localConfig?.backgroundTheme === 'type7' 
+                        ? 'border-blue-700 bg-blue-50' 
+                        : 'border-gray-200 hover:border-gray-300'
+                    }`}>
+                      <input
+                        type="radio"
+                        name="backgroundTheme"
+                        value="type7"
+                        checked={localConfig?.backgroundTheme === 'type7'}
+                        onChange={(e) => updateConfigField('backgroundTheme', e.target.value)}
+                        className="mt-1 w-4 h-4 text-blue-700 focus:ring-blue-700"
+                      />
+                      <div className="flex-1">
+                        <div className="flex items-center gap-3">
+                          <div className="w-8 h-8 rounded-lg mr-1 flex items-center justify-center border border-blue-700/20 bg-gradient-to-br from-blue-600/10 to-blue-800/10">
+                            <span className="text-blue-700 text-sm font-bold">7</span>
+                          </div>
+                          <div>
+                            <div className="text-sm sm:text-base font-medium text-gray-900">Type 7 (Custom Image)</div>
+                            <div className="text-xs text-gray-500">Upload a custom image as the full-page background</div>
+                          </div>
+                        </div>
+                        {localConfig?.backgroundTheme === 'type7' && (
+                          <div className="mt-3">
+                            <div className="flex items-center gap-3">
+                              <input
+                                type="file"
+                                accept="image/*"
+                                id="themeBackgroundImage"
+                                className="hidden"
+                                onChange={async (e) => {
+                                  const file = e.target.files?.[0];
+                                  if (!file) return;
+                                  const formData = new FormData();
+                                  formData.append('image', file);
+                                  try {
+                                    setConfigSaving(true);
+                                    const res = await axios.post('/api/upload/theme-background', formData, { headers: { 'Content-Type': 'multipart/form-data' } });
+                                    if (res.data?.success) {
+                                      updateConfigField('backgroundImageUrl', res.data.url);
+                                    }
+                                  } catch (err) {
+                                    console.error('Theme background upload failed:', err);
+                                  } finally {
+                                    setConfigSaving(false);
+                                  }
+                                }}
+                              />
+                              <label
+                                htmlFor="themeBackgroundImage"
+                                className="px-3 py-2 bg-blue-600 text-white text-xs sm:text-sm rounded-lg hover:bg-blue-700 transition-colors cursor-pointer"
+                              >
+                                {configSaving ? 'Uploading...' : 'Upload Image'}
+                              </label>
+                              {localConfig?.backgroundImageUrl && (
+                                <span className="text-xs text-gray-600 truncate">{localConfig.backgroundImageUrl}</span>
+                              )}
+                            </div>
+                            {localConfig?.backgroundImageUrl && (
+                              <div className="mt-2">
+                                <div
+                                  className="w-full h-28 bg-cover bg-center rounded-lg border"
+                                  style={{ backgroundImage: `url('${localConfig.backgroundImageUrl}')` }}
+                                />
+                              </div>
+                            )}
+                          </div>
+                        )}
+                      </div>
+                    </label>
                   </div>
                 </div>
 
