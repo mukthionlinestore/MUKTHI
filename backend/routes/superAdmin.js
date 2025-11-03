@@ -72,6 +72,7 @@ router.get('/public-config', async (req, res) => {
       websiteDescription: config.websiteDescription,
       websiteLogo: config.websiteLogo,
       logoAlt: config.logoAlt,
+      siteNameColor: config.siteNameColor || '#D4AF37',
       contactEmail: config.contactEmail,
       contactPhone: config.contactPhone,
       contactAddress: config.contactAddress,

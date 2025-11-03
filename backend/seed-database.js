@@ -90,6 +90,7 @@ async function seedDatabase() {
         websiteName: 'MUKTHI Store',
         websiteLogo: '',
         logoAlt: 'MUKTHI Store Logo',
+        siteNameColor: '#D4AF37', // Golden color
         faviconUrl: '/favicon.ico',
         metaTitle: 'MUKTHI Store - Your Shopping Destination',
         metaDescription: 'Shop the latest products at MUKTHI Store',

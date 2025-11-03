@@ -135,7 +135,7 @@ const Navbar = () => {
                 ) : (
                   <FaStore className="w-8 h-8 sm:w-12 sm:h-12 lg:w-14 lg:h-14 text-gray-800 transition-all duration-300 group-hover:scale-105" />
                 )}
-                <span className="text-lg sm:text-xl font-bold text-gray-900 group-hover:text-blue-600 transition-colors duration-200">
+                <span className="text-lg sm:text-xl font-bold group-hover:text-blue-600 transition-colors duration-200" style={{ color: config?.siteNameColor || '#D4AF37' }}>
                 {config?.websiteName || 'MUKHTI'}
               </span>
             </Link>

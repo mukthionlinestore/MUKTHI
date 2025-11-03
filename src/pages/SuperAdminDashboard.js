@@ -66,6 +66,7 @@ const SuperAdminDashboard = () => {
       // If no config is available, initialize with default values
       const defaultConfig = {
         websiteName: 'MUKHTI',
+        siteNameColor: '#D4AF37', // Golden color
         websiteDescription: 'Gracefully unbound - Premium lifestyle and fashion destination',
         contactEmail: 'contact@mukhti.com',
         contactPhone: '+1 (555) 123-4567',
@@ -828,6 +829,25 @@ const SuperAdminDashboard = () => {
                         className="w-full px-3 py-2 text-xs sm:text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                         placeholder="Enter website name"
                       />
+                    </div>
+                    <div>
+                      <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-1.5">Site Name Color</label>
+                      <div className="flex items-center gap-2">
+                        <input
+                          type="color"
+                          value={localConfig?.siteNameColor || '#D4AF37'}
+                          onChange={(e) => updateConfigField('siteNameColor', e.target.value)}
+                          className="w-12 h-10 border border-gray-300 rounded-lg cursor-pointer"
+                        />
+                        <input
+                          type="text"
+                          value={localConfig?.siteNameColor || '#D4AF37'}
+                          onChange={(e) => updateConfigField('siteNameColor', e.target.value)}
+                          className="flex-1 px-3 py-2 text-xs sm:text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                          placeholder="#D4AF37"
+                        />
+                      </div>
+                      <p className="text-xs text-gray-500 mt-1">Default: Golden (#D4AF37)</p>
                     </div>
                     <div>
                       <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-1.5">Contact Email</label>

@@ -19,6 +19,10 @@ const websiteConfigSchema = new mongoose.Schema({
     type: String,
     default: 'Website Logo'
   },
+  siteNameColor: {
+    type: String,
+    default: '#D4AF37' // Golden color for site name
+  },
   websiteFavicon: {
     type: String,
     default: ''

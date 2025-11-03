@@ -195,7 +195,7 @@ const Footer = () => {
                       <FaStore className="w-6 h-6 sm:w-7 sm:h-7 text-white" />
                     )}
                   </div>
-                  <span className="text-lg sm:text-xl font-bold tracking-tight text-gray-900">
+                  <span className="text-lg sm:text-xl font-bold tracking-tight" style={{ color: config?.siteNameColor || '#D4AF37' }}>
                     {config?.websiteName || footerData.companyName || 'MUKHTI'}
                   </span>
                 </div>
