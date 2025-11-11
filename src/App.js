@@ -135,9 +135,11 @@ function DynamicBackground() {
       {/* Flower Image Background for Type 6 */}
       {theme === 'type6' && (
         <div 
-          className="absolute inset-0 pointer-events-none bg-cover bg-center bg-no-repeat"
+          className="fixed inset-0 pointer-events-none bg-no-repeat bg-center z-0"
           style={{
             backgroundImage: `url('/images/flower-background.jpg')`,
+            backgroundSize: 'cover',
+            backgroundAttachment: 'fixed',
             opacity: 0.4
           }}
         ></div>
@@ -146,8 +148,12 @@ function DynamicBackground() {
       {/* Background Image for Type 7 */}
       {theme === 'type7' && config?.backgroundImageUrl && (
         <div
-          className="absolute inset-0 pointer-events-none bg-no-repeat bg-center bg-cover"
-          style={{ backgroundImage: `url('${config.backgroundImageUrl}')` }}
+          className="fixed inset-0 pointer-events-none bg-no-repeat bg-center z-0"
+          style={{ 
+            backgroundImage: `url('${config.backgroundImageUrl}')`,
+            backgroundSize: 'cover',
+            backgroundAttachment: 'fixed',
+          }}
         ></div>
       )}
 
